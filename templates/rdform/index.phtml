@@ -1,0 +1,32 @@
+Model: <input type="text" id="modelIri" label="model" /><br />
+Resource: <input type="text" id="resourceIri" label="resource" /><br />
+<input type="button" value="get" onClick="get()" />
+<input type="button" value="update" onClick="update()" /><br/>
+DataHash: <input type="text" id="dataHash" label="dataHash" /><br />
+<input type="checkbox" id="editable" disabled="true" /> editable<br/>
+<textarea id="jsonData">
+</textarea>
+
+<script language="JavaScript">
+var modelIri = '<?= $this->selectedModel ?>';
+var resourceIri = 'http://example.org/res';
+$('#modelIri').val(modelIri);
+$('#resourceIri').val(resourceIri);
+
+var con = new OntoWikiConnection(urlBase + 'jsonrpc');
+
+var get = function () {
+    var modelIri = $('#modelIri').val();
+    var resourceIri = $('#resourceIri').val();
+    con.getResource(modelIri, resourceIri);
+}
+
+var update = function () {
+    var modelIri = $('#modelIri').val();
+    var resourceIri = $('#resourceIri').val();
+    var hash = $('#dataHash').val();
+    var data = $('#jsonData').val();
+    con.updateResource(modelIri, resourceIri, hash, data);
+}
+</script>
+
