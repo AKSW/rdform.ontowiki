@@ -1,0 +1,6 @@
+[submodule "js/lib/jquery.jsonrpcclient.js"]
+	path = js/lib/jquery.jsonrpcclient.js
+	url = https://github.com/Textalk/jquery.jsonrpcclient.js.git
+[submodule "js/lib/jsonld.js"]
+	path = js/lib/jsonld.js
+	url = https://github.com/digitalbazaar/jsonld.js.git
