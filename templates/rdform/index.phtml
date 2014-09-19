@@ -4,12 +4,17 @@ Resource: <input type="text" id="resourceIri" label="resource" /><br />
 <input type="button" value="update" onClick="update()" /><br/>
 DataHash: <input type="text" id="dataHash" label="dataHash" /><br />
 <input type="checkbox" id="editable" disabled="true" /> editable<br/>
-<textarea id="jsonData">
-</textarea>
+<!--<textarea id="jsonData">
+</textarea>-->
+
+<p><hr /></p>
+
+<form action="#" class="form-horizontal rdform" role="form"></form>
 
 <script language="JavaScript">
 var modelIri = '<?= $this->selectedModel ?>';
-var resourceIri = 'http://example.org/res';
+//var resourceIri = 'http://example.org/res';
+var resourceIri = '<?= $this->selectedModel ?>Person/Max_Mustermann';
 $('#modelIri').val(modelIri);
 $('#resourceIri').val(resourceIri);
 
@@ -22,10 +27,14 @@ var get = function () {
 }
 
 var update = function () {
+
+	$("form.rdform").submit();
+
     var modelIri = $('#modelIri').val();
     var resourceIri = $('#resourceIri').val();
     var hash = $('#dataHash').val();
-    var data = $('#jsonData').val();
+    //var data = $('#jsonData').val();
+    var data = ( $(".rdform-result textarea").val() ); // packing into array
     con.updateResource(modelIri, resourceIri, hash, data);
 }
 </script>

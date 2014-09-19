@@ -21,7 +21,7 @@ class RdformController extends OntoWiki_Controller_Component
     {
         $owApp = OntoWiki::getInstance();
         
-        $this->view->headLink()->appendStylesheet( $owApp->extensionManager->getComponentUrl('rdform') . 'js/lib/rdform/css/bootstrap.min.css' );
+        //$this->view->headLink()->appendStylesheet( $owApp->extensionManager->getComponentUrl('rdform') . 'js/lib/rdform/css/bootstrap.min.css' );
         $this->view->headLink()->appendStylesheet( $owApp->extensionManager->getComponentUrl('rdform') . 'js/lib/rdform/css/rdform.css' );
 
         $this->view->headScript()->appendFile($owApp->extensionManager->getComponentUrl('rdform') . 'js/lib/jquery.jsonrpcclient.js/jquery.jsonrpcclient.js');

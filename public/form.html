@@ -1,0 +1,15 @@
+<form prefix="rdf http://www.w3.org/1999/02/22-rdf-syntax-ns# xsd http://www.w3.org/2001/XMLSchema#">
+  
+  <legend>Person</legend>
+  <div typeof="http://localhost/OntoWiki/Example/owl_ClassPerson" resource="http://localhost/OntoWiki/Example/Person/{http://www.w3.org/2000/01/rdf-schema#label}">
+
+    <label>ID:</label>                                                                           
+    <input name="http://xmlns.com/foaf/0.1/id" type="literal" datatype="xsd:integer" />
+
+    <label>Label:</label>                                                                           
+    <input name="http://www.w3.org/2000/01/rdf-schema#label" type="literal" datatype="xsd:string" required />
+
+    <label>Vorname:</label>                                                                           
+    <input name="http://xmlns.com/foaf/0.1/name" type="literal" datatype="xsd:string" multiple />    
+
+</form>
