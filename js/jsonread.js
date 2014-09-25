@@ -2,14 +2,18 @@
 
 function OntoWikiConnection (urlBase){
     var self = this;
-
     this.urlBase = urlBase;
 
     $(".rdform").RDForm({
         model: parent.urlBase + "extensions/rdform/public/form.html",
-        //data: compacted,
         hooks: parent.urlBase + "extensions/rdform/public/hooks.js",
-        //lang: "de"
+
+        submit: function() {
+            var modelIri = $('#modelIri').val();
+            var resourceIri = $('#resourceIri').val();
+            var hash = $('#dataHash').val();
+            self.updateResource( modelIri, resourceIri, hash, $(this)[0] );
+        }
     });
 
     this.getResource = function (modelIri, resourceIri) {
@@ -19,12 +23,10 @@ function OntoWikiConnection (urlBase){
                 function(result) {
                     $('#editable').prop('checked', result.editable);
                     $('#dataHash').val(result.dataHash);
-                    //console.log(result);
                     jsonld.fromRDF(
                         result.data, 
                         {format: 'application/nquads'},
                         function(err, doc) {
-                            //$('#jsonData').val(JSON.stringify(doc, null, 2));
 
                             // need this for correct compaction
                             /*var context = {
@@ -34,11 +36,6 @@ function OntoWikiConnection (urlBase){
                             };*/
                             var context = {};
                             jsonld.compact(doc, context, function(err, compacted) {
-                                
-                                //console.log(compacted);
-
-                                
-
                                 RDForm.addExistingData( undefined, compacted );
                             });
                         }
@@ -49,7 +46,7 @@ function OntoWikiConnection (urlBase){
     };
 
     this.updateResource = function (modelIri, resourceIri, hash, data) {
-        data = JSON.parse(data);
+        //data = JSON.parse(data);
         jsonld.toRDF(
                 data, {format: 'application/nquads'},
                 function(err, nquads) {
@@ -57,8 +54,8 @@ function OntoWikiConnection (urlBase){
                     meta.call(
                         'update', [modelIri, resourceIri, nquads, hash, 'ntriples'],
                         function(result) {
-                            //$('#jsonData').val(result);
-                            $(".rdform-result textarea").val( result );
+                            var redirectUri = $("#redirectUri").val();
+                            window.location.href = decodeURIComponent(redirectUri);
                         },
                         function(error)  { console.log('There was an error', error); }
                         );
