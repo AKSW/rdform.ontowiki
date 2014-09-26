@@ -21,15 +21,20 @@ class RdformHelper extends OntoWiki_Component_Helper
 {
     public function init()
     {
-        OntoWiki::getInstance()->getNavigation()->register(
-            'rdform',
-            array(
-                'controller' => 'rdform',     // history controller
-                'action'     => 'index',        // list action
-                'name'       => 'RDForm',
-                'priority'   => 20
-            )
-        );
+
+        $owApp = OntoWiki::getInstance();
+
+        if ($owApp->lastRoute == 'properties' && $owApp->selectedResource != null) {
+            $owApp->getNavigation()->register(
+                'rdform',
+                array(
+                    'controller' => 'rdform',     // history controller
+                    'action'     => 'index',        // list action
+                    'name'       => 'RDForm',
+                    'priority'   => 20
+                )
+            );
+        }
     }
 }
 
