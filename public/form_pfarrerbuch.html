@@ -1,44 +1,52 @@
 <form prefix="rdf http://www.w3.org/1999/02/22-rdf-syntax-ns# xsd http://www.w3.org/2001/XMLSchema#">
   
-  <legend>Person</legend>
-  <div typeof="http://xmlns.com/foaf/0.1/Person" resource="http://pfarrerbuch.comiles.eu/sachsen/person/-{id}">
+	<legend>Person</legend>
+	<div typeof="http://xmlns.com/foaf/0.1/Person" resource="http://pfarrerbuch.comiles.eu/sachsen/person/-{id}">
 
-  	<input name="id" type="hidden" />
+		<input name="id" type="hidden" />
 
-  	<label>ist Pfarrer</label>
-  	<input type="literal" boolean name="http://purl.org/voc/hp/isPastor" datatype="xsd:boolean" />
+		<label>ist Pfarrer</label>
+		<input type="literal" boolean name="http://purl.org/voc/hp/isPastor" datatype="xsd:boolean" />
 
-    <label>Label:</label>
-    <input name="http://www.w3.org/2000/01/rdf-schema#label" value="{http://xmlns.com/foaf/0.1/name} (*{http://purl.org/voc/hp/birthDate} †{http://purl.org/voc/hp/dateOfDeath})" type="literal" readonly="" />
+		<label>Label:</label>
+		<input name="http://www.w3.org/2000/01/rdf-schema#label" value="{http://xmlns.com/foaf/0.1/name} (*{http://purl.org/voc/hp/birthDate} †{http://purl.org/voc/hp/dateOfDeath})" type="literal" readonly="" />
 
-    <label>Name:</label>
-    <input name="http://xmlns.com/foaf/0.1/name" value="{http://xmlns.com/foaf/0.1/firstName} {http://xmlns.com/foaf/0.1/lastName}" type="literal" readonly="" />
+		<label>Name:</label>
+		<input name="http://xmlns.com/foaf/0.1/name" value="{http://xmlns.com/foaf/0.1/firstName} {http://xmlns.com/foaf/0.1/lastName}" type="literal" readonly="" />
 
-    <label>Vorname:</label>
-    <input name="http://xmlns.com/foaf/0.1/firstName" type="literal" />    
+		<label>Vorname:</label>
+		<input name="http://xmlns.com/foaf/0.1/firstName" type="literal" />
 
-    <label>Nachname:</label>
-    <input name="http://xmlns.com/foaf/0.1/lastName" type="literal" />    
+		<label>Nachname:</label>
+		<input name="http://xmlns.com/foaf/0.1/lastName" type="literal" />
 
-    <label>Geburtsdatum:</label>
-    <input name="http://purl.org/voc/hp/birthDate" type="literal" datattype="xsd:date" />    
+		<label>Alternativer Namen:</label>
+        <input type="literal" name="http://purl.org/voc/hp/nameVariant" datatype="xsd:string" />
 
-    <label>Geburtsort:</label>
-    <input type="resource" external name="http://purl.org/voc/hp/birthPlace" />
+		<label>Geburtsdatum:</label>
+		<input name="http://purl.org/voc/hp/birthDate" type="literal" datattype="xsd:date" />
 
-    <label>Sterbedatum:</label>
-    <input name="http://purl.org/voc/hp/dateOfDeath" type="literal" datattype="xsd:date" />    
+		<label>Geburtsort:</label>
+		<input type="resource" external name="http://purl.org/voc/hp/birthPlace" />
 
-    <label>Schule:</label>
-    <input type="resource" external name="http://purl.org/voc/hp/attendedSchool" />
+		<label>Sterbedatum:</label>
+		<input name="http://purl.org/voc/hp/dateOfDeath" type="literal" datattype="xsd:date" />
 
-    <label>Vater:</label>
-    <input type="resource" external name="http://purl.org/voc/hp/father" />
+		<label>Vater:</label>
+		<input type="resource" external name="http://purl.org/voc/hp/father" />
 
-    <label>Pfarrstelle:</label>
-    <input type="resource" external name="http://purl.org/voc/hp/hasPosition" />
+		<label>Schule:</label>
+		<input type="resource" external name="http://purl.org/voc/hp/attendedSchool" multiple />
 
-    <label>Kommentar</label>
-    <input name="http://www.w3.org/2000/01/rdf-schema#comment" textarea type="literal" additional />    
+		<label>Ordinationsdatum:</label>
+        <input type="literal" name="http://purl.org/voc/hp/dateOfOrdination" datatype="xsd:date" placeholder="JJJJ-MM-TT" />
+
+		<label>Pfarrstelle:</label>
+		<input type="resource" external name="http://purl.org/voc/hp/hasPosition" multiple />
+
+		<label>Kommentar</label>
+		<input name="http://www.w3.org/2000/01/rdf-schema#comment" textarea type="literal" additional />
+
+    </div>
 
 </form>
