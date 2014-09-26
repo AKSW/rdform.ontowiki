@@ -5,8 +5,8 @@ function OntoWikiConnection (urlBase){
     this.urlBase = urlBase;
 
     $(".rdform").RDForm({
-        model: parent.urlBase + "extensions/rdform/public/form.html",
-        hooks: parent.urlBase + "extensions/rdform/public/hooks.js",
+        model: parent.urlBase + "extensions/rdform/public/form_pfarrerbuch.html",
+        hooks: parent.urlBase + "extensions/rdform/public/hooks_pfarrerbuch.js",
 
         submit: function() {
             var modelIri = $('#modelIri').val();
@@ -33,9 +33,10 @@ function OntoWikiConnection (urlBase){
                                 "http://xmlns.com/foaf/0.1/id" : {
                                     "@type" : "http://www.w3.org/2001/XMLSchema#integer"
                                 }
-                            };*/
+                            };*/                            
                             var context = {};
                             jsonld.compact(doc, context, function(err, compacted) {
+                                //$("#jsonResult").val( JSON.stringify(compacted, null, '\t') );
                                 RDForm.addExistingData( undefined, compacted );
                             });
                         }
