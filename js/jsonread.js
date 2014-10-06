@@ -2,19 +2,23 @@
 
 function OntoWikiConnection (urlBase){
     var self = this;
-    this.urlBase = urlBase;
+    this.urlBase = urlBase;    
 
-    $(".rdform").RDForm({
-        model: parent.urlBase + "extensions/rdform/public/form_pfarrerbuch.html",
-        hooks: parent.urlBase + "extensions/rdform/public/hooks_pfarrerbuch.js",
+    this.initRDForm = function ( data ) {
+        $(".rdform").RDForm({
+            model: parent.urlBase + "extensions/rdform/public/form_pfarrerbuch.html",
+            hooks: parent.urlBase + "extensions/rdform/public/hooks_pfarrerbuch.js",
+            data: data,
 
-        submit: function() {
-            var modelIri = $('#modelIri').val();
-            var resourceIri = $('#resourceIri').val();
-            var hash = $('#dataHash').val();
-            self.updateResource( modelIri, resourceIri, hash, $(this)[0] );
-        }
-    });
+            submit: function() {
+                var modelIri = $('#modelIri').val();
+                var resourceIri = $('#resourceIri').val();
+                var hash = $('#dataHash').val();
+                self.updateResource( modelIri, resourceIri, hash, $(this) );
+                //RDForm.outputResult();
+            }
+        });
+    };
 
     this.getResource = function (modelIri, resourceIri) {
         var meta = new $.JsonRpcClient({ ajaxUrl: this.urlBase + '/resource' });
@@ -33,12 +37,18 @@ function OntoWikiConnection (urlBase){
                                 "http://xmlns.com/foaf/0.1/id" : {
                                     "@type" : "http://www.w3.org/2001/XMLSchema#integer"
                                 }
-                            };*/                            
+                            };*/  
+                            //$("#jsonResult").val( JSON.stringify(doc, null, '\t') );                          
+                            /*
                             var context = {};
                             jsonld.compact(doc, context, function(err, compacted) {
                                 //$("#jsonResult").val( JSON.stringify(compacted, null, '\t') );
-                                RDForm.addExistingData( undefined, compacted );
+                                // TODO dont need to compcat data!
+                                //RDForm.addExistingData( undefined, compacted );
+                                self.initRDForm( doc );
                             });
+                            */
+                            self.initRDForm( doc );
                         }
                         );
                 },
