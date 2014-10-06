@@ -6,7 +6,9 @@
 DataHash: <input type="text" id="dataHash" label="dataHash" />
 <input type="checkbox" id="editable" disabled="true" /> editable<br />
 
-<!--<textarea id="jsonResult"></textarea>-->
+<!--
+<textarea id="jsonResult"></textarea>
+-->
 
 <p><hr /></p>
 
@@ -20,3 +22,38 @@ DataHash: <input type="text" id="dataHash" label="dataHash" />
 	con.getResource( modelIri, resourceIri );
 </script>
 
+<style type="text/css">
+* {
+    box-sizing: border-box;
+}
+.rdform {
+	max-width: 800px;
+}
+
+.form-group {
+	margin-bottom: 15px;
+}
+.form-group:after {
+	clear: both;
+	content: " ";
+display: table;
+}
+.col-xs-3,
+.col-xs-9 {
+	float: left;
+	padding-left: 15px;
+	padding-right: 15px;
+	position: relative;
+}
+.col-xs-3 {
+	width: 25%;
+	
+}
+.col-xs-9 {
+	width: 75%;
+}
+.form-horizontal .control-label {
+	text-align: right;
+}
+
+</style>
