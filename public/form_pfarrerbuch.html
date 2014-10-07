@@ -4,12 +4,14 @@
 	<div typeof="http://xmlns.com/foaf/0.1/Person" resource="http://pfarrerbuch.comiles.eu/sachsen/person/-{id}">
 
 		<input name="id" type="hidden" />
+		<input name="birthDate" type="hidden" value="{http://purl.org/voc/hp/birthDate}" />
+		<input name="deathDate" type="hidden" value="{http://purl.org/voc/hp/dateOfDeath}" />
 
 		<label>ist Pfarrer</label>
 		<input type="literal" boolean name="http://purl.org/voc/hp/isPastor" datatype="xsd:boolean" />
 
 		<label>Label:</label>
-		<input name="http://www.w3.org/2000/01/rdf-schema#label" value="{http://xmlns.com/foaf/0.1/name} (*{http://purl.org/voc/hp/birthDate} †{http://purl.org/voc/hp/dateOfDeath})" type="literal" readonly="" />
+		<input name="http://www.w3.org/2000/01/rdf-schema#label" value="{http://xmlns.com/foaf/0.1/name} (*{birthDate} †{deathDate})" type="literal" readonly="" />
 
 		<label>Name:</label>
 		<input name="http://xmlns.com/foaf/0.1/name" value="{http://xmlns.com/foaf/0.1/firstName} {http://xmlns.com/foaf/0.1/lastName}" type="literal" readonly="" />
