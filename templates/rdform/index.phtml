@@ -1,16 +1,18 @@
 <?php if ($this->has('redirectUri')): ?>
     <input type="hidden" id="redirectUri" value="<?php echo $this->redirectUri ?>"/>
 <?php endif; ?>
+<input type="hidden" id="urlBase" value="<?php echo $this->urlBase ?>" />
 <input type="hidden" id="modelIri" label="model" value="<?php echo $this->selectedModel ?>" />
 <input type="hidden" id="resourceIri" label="resource" value="<?php echo $this->selectedResource ?>" />
-DataHash: <input type="text" id="dataHash" label="dataHash" />
-<input type="checkbox" id="editable" disabled="true" /> editable<br />
+<input type="hidden" id="dataHash" label="dataHash" />
+<input type="hidden" id="editable" disabled="true" />
 
 <!--
 <textarea id="jsonResult"></textarea>
--->
 
 <p><hr /></p>
+-->
+<?php //var_dump($this) ?>
 
 <form action="#" class="form-horizontal rdform" role="form"></form>
 
@@ -54,6 +56,9 @@ display: table;
 }
 .form-horizontal .control-label {
 	text-align: right;
+}
+.text-right {
+    text-align: right;
 }
 
 </style>
