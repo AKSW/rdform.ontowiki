@@ -14,7 +14,7 @@ function OntoWikiConnection (urlBase){
                 var modelIri = $('#modelIri').val();
                 var resourceIri = $('#resourceIri').val();
                 var hash = $('#dataHash').val();
-                self.updateResource( modelIri, resourceIri, hash, $(this) );
+                self.updateResource( modelIri, resourceIri, hash, $(this)[0] );
                 //RDForm.outputResult();
             }
         });
