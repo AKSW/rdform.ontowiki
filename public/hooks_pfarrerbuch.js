@@ -5,14 +5,17 @@ __initFormHandlers = function () {
 	var resourceIri = $("#resourceIri").val();
 	var pID = resourceIri.substring( resourceIri.indexOf("-") + 1 );
 	rdform.find( 'input[name="id"]' ).val( pID );
-
+	
 	rdform.on("keyup", 'input[name="http://purl.org/voc/hp/birthDate"]', function() {
-		rdform.find('input[name="birthDate"]').val( $(this).val().substring(0, 4) ).trigger("keyup");
+		var bYear = $(this).val().slice(0, 4);
+		rdform.find('input[name="birthDate"]').val( bYear ).trigger("keyup");
 	});	
 
 	rdform.on("keyup", 'input[name="http://purl.org/voc/hp/dateOfDeath"]', function() {
-		rdform.find('input[name="deathDate"]').val( $(this).val().substring(0, 4) ).trigger("keyup");
+		var dYear = $(this).val().slice(0, 4);
+		rdform.find('input[name="deathDate"]').val( dYear ).trigger("keyup");
 	});	
+	
 
 }
 
@@ -25,7 +28,8 @@ __afterInsertData = function() {
 		if ( $(this).val() != "" ) {
 			$(this).hide();
 			var thisResource = $(this);
-			var resLink = urlBase + "view/?r=" + $(thisResource).val()
+			//var resLink = urlBase + "view/?r=" + $(thisResource).val()
+			var resLink = $(thisResource).val()
 			var meta = new $.JsonRpcClient({ ajaxUrl: urlBase + 'jsonrpc/resource' });
 	        meta.call(
 				'get', [modelIri, $(thisResource).val(), 'ntriples'],
