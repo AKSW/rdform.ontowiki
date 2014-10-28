@@ -72,4 +72,13 @@ class RdformController extends OntoWiki_Controller_Component
         return true;
     }
 
+    public function titlesAction()
+    {
+        $owApp = OntoWiki::getInstance();
+        $this->view->headScript()->appendFile($owApp->extensionManager->getComponentUrl('rdform') . 'js/lib/jquery.jsonrpcclient.js/jquery.jsonrpcclient.js');
+        $this->view->headScript()->appendFile($owApp->extensionManager->getComponentUrl('rdform') . 'js/lib/jsonld.js/js/jsonld.js');
+        $this->view->headScript()->appendFile($owApp->extensionManager->getComponentUrl('rdform') . 'js/jsonread.js');
+
+        $this->view->selectedModel = $owApp->selectedModel;
+    }
 }

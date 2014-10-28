@@ -41,6 +41,18 @@ function OntoWikiConnection (urlBase){
                 );
     };
 
+    this.getTitles = function (modelIri, resources) {
+        var meta = new $.JsonRpcClient({ ajaxUrl: this.urlBase + '/model' });
+        meta.call(
+                'getTitles', [modelIri, resources],
+                function(result) {
+                    $('#jsonData').val(JSON.stringify(result));
+                    /*$('#jsonData').val(result.data);*/
+                },
+                function(error)  { console.log('There was an error', error); }
+                );
+    };
+
     this.updateResource = function (modelIri, resourceIri, hash, data) {
         jsonld.toRDF(
                 data, {format: 'application/nquads'},

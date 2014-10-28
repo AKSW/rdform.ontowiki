@@ -1,0 +1,19 @@
+Model: <input type="text" id="modelIri" label="model" /><br />
+<input type="button" value="get" onClick="get()" />
+<textarea id="jsonData">
+</textarea>
+
+<script language="JavaScript">
+var modelIri = '<?= $this->selectedModel ?>';
+$('#modelIri').val(modelIri);
+
+var con = new OntoWikiConnection(urlBase + 'jsonrpc');
+
+var get = function () {
+    var modelIri = $('#modelIri').val();
+    var resources = $('#jsonData').val();
+    con.getTitles(modelIri, resources);
+}
+
+</script>
+
