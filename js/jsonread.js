@@ -8,12 +8,14 @@ function OntoWikiConnection (urlBase){
         $(".rdform").RDForm({
             model: parent.urlBase + "extensions/rdform/public/form_pfarrerbuch.html",
             hooks: parent.urlBase + "extensions/rdform/public/hooks_pfarrerbuch.js",
+            //lang: parent.urlBase + "extensions/rdform/public/lang",
             data: data,
 
             submit: function() {
                 var modelIri = $('#modelIri').val();
                 var resourceIri = $('#resourceIri').val();
                 var hash = $('#dataHash').val();
+                
                 self.updateResource( modelIri, resourceIri, hash, $(this)[0] );
                 //RDForm.outputResult();
             }
@@ -31,23 +33,6 @@ function OntoWikiConnection (urlBase){
                         result.data, 
                         {format: 'application/nquads'},
                         function(err, doc) {
-
-                            // need this for correct compaction
-                            /*var context = {
-                                "http://xmlns.com/foaf/0.1/id" : {
-                                    "@type" : "http://www.w3.org/2001/XMLSchema#integer"
-                                }
-                            };*/  
-                            //$("#jsonResult").val( JSON.stringify(doc, null, '\t') );                          
-                            /*
-                            var context = {};
-                            jsonld.compact(doc, context, function(err, compacted) {
-                                //$("#jsonResult").val( JSON.stringify(compacted, null, '\t') );
-                                // TODO dont need to compcat data!
-                                //RDForm.addExistingData( undefined, compacted );
-                                self.initRDForm( doc );
-                            });
-                            */
                             self.initRDForm( doc );
                         }
                         );
@@ -57,7 +42,6 @@ function OntoWikiConnection (urlBase){
     };
 
     this.updateResource = function (modelIri, resourceIri, hash, data) {
-        //data = JSON.parse(data);
         jsonld.toRDF(
                 data, {format: 'application/nquads'},
                 function(err, nquads) {
