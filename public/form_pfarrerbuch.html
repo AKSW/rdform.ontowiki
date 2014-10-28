@@ -1,6 +1,6 @@
 <form prefix="rdf http://www.w3.org/1999/02/22-rdf-syntax-ns# xsd http://www.w3.org/2001/XMLSchema#">
   
-	<legend>Person</legend>
+	<legend>Person / Pfarrer</legend>
 	<div typeof="http://xmlns.com/foaf/0.1/Person" resource="http://pfarrerbuch.comiles.eu/sachsen/person/-{id}">
 
 		<input name="id" type="hidden" />
@@ -10,37 +10,43 @@
 		<label>ist Pfarrer</label>
 		<input type="literal" boolean name="http://purl.org/voc/hp/isPastor" datatype="xsd:boolean" />
 
-		<label>Label:</label>
+		<label>Label</label>
 		<input name="http://www.w3.org/2000/01/rdf-schema#label" value="{http://xmlns.com/foaf/0.1/name} (*{birthDate} †{deathDate})" type="literal" readonly="" />
 
-		<label>Name:</label>
+		<label>Name</label>
 		<input name="http://xmlns.com/foaf/0.1/name" value="{http://xmlns.com/foaf/0.1/firstName} {http://xmlns.com/foaf/0.1/lastName}" type="literal" readonly="" />
 
-		<label>Vorname:</label>
+		<label>Vorname</label>
 		<input name="http://xmlns.com/foaf/0.1/firstName" type="literal" />
 
-		<label>Nachname:</label>
-		<input name="http://xmlns.com/foaf/0.1/lastName" type="literal" />
+		<label>Nachname</label>
+		<input name="http://xmlns.com/foaf/0.1/lastName" type="literal" required />
 
-		<label>Geburtsdatum:</label>
-		<input name="http://purl.org/voc/hp/birthDate" type="literal" datattype="xsd:date" />
+		<label>Geburtsdatum</label>
+		<input name="http://purl.org/voc/hp/birthDate" type="literal" datatype="xsd:date" />
 
-		<label>Geburtsort:</label>
-		<input type="resource" external name="http://purl.org/voc/hp/birthPlace" />
+		<label>Geburtsort</label>
+		<input type="resource" external name="http://purl.org/voc/hp/birthPlace" autocomplete
+			query-endpoint="http://pfarrerbuch.comiles.eu/sparql"
+            query-apitype="sparql"
+            query-datatype="json"
+            query="SELECT DISTINCT * WHERE {?item <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/voc/hp/Place>;<http://www.w3.org/2000/01/rdf-schema#label> ?label. FILTER regex(?label,%s,'i')}LIMIT 20"
+        />
+		/>
 
-		<label>Sterbedatum:</label>
-		<input name="http://purl.org/voc/hp/dateOfDeath" type="literal" datattype="xsd:date" />
+		<label>Sterbedatum</label>
+		<input name="http://purl.org/voc/hp/dateOfDeath" type="literal" datatype="xsd:date" />
 
-		<label>Vater:</label>
+		<label>Vater</label>
 		<input type="resource" external name="http://purl.org/voc/hp/father" />
 
-		<label>Kinder:</label>
-		<input type="resource" external name="http://purl.org/voc/hp/child" />
+		<label>Kinder</label>
+		<input type="resource" external name="http://purl.org/voc/hp/child" multiple />
 
-		<label>Schule:</label>
+		<label>Schule</label>
 		<input type="resource" external name="http://purl.org/voc/hp/attendedSchool" multiple />
 
-		<label>Pfarrstelle:</label>
+		<label>Pfarrstelle</label>
 		<input type="resource" external name="http://purl.org/voc/hp/hasPosition" multiple />
 
 		<label>Kommentar</label>
