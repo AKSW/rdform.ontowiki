@@ -25,8 +25,10 @@ __afterInsertData = function() {
 	var urlBase = $('#urlBase').val();	
 
 	rdform.find( 'input[external]' ).each(function() {
-		if ( $(this).val() != "" ) {
-			$(this).hide();
+		$(this).hide();
+		$(this).nextAll(".duplicate-external-resource").hide();
+		$(this).nextAll(".remove-external-resource").hide();
+		if ( $(this).val() != "" ) {			
 			var thisResource = $(this);
 			//var resLink = urlBase + "view/?r=" + $(thisResource).val()
 			var resLink = $(thisResource).val()
