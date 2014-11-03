@@ -1,8 +1,6 @@
 <form prefix="rdf http://www.w3.org/1999/02/22-rdf-syntax-ns# xsd http://www.w3.org/2001/XMLSchema#">
-  
-	<legend>Person / Pfarrer</legend>
+	<legend>Person/Pfarrer</legend>
 	<div typeof="http://xmlns.com/foaf/0.1/Person" resource="http://pfarrerbuch.comiles.eu/sachsen/person/-{id}">
-
 		<input name="id" type="hidden" />
 		<input name="birthDate" type="hidden" value="{http://purl.org/voc/hp/birthDate}" />
 		<input name="deathDate" type="hidden" value="{http://purl.org/voc/hp/dateOfDeath}" />
@@ -32,13 +30,21 @@
             query-datatype="json"
             query="SELECT DISTINCT * WHERE {?item <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/voc/hp/Place>;<http://www.w3.org/2000/01/rdf-schema#label> ?label. FILTER regex(?label,%s,'i')}LIMIT 20"
         />
-		/>
 
 		<label>Sterbedatum</label>
 		<input name="http://purl.org/voc/hp/dateOfDeath" type="literal" datatype="xsd:date" />
 
+		<label>Sterbeort</label>
+		<input name="http://purl.org/voc/hp/placeOfDeath" type="resource" external />
+
 		<label>Vater</label>
 		<input type="resource" external name="http://purl.org/voc/hp/father" />
+
+		<label>Mutter</label>
+		<input type="resource" external name="http://purl.org/voc/hp/mother" />
+
+		<label>Ehepartner</label>
+		<input type="resource" external name="http://purl.org/voc/hp/spouse" />
 
 		<label>Kinder</label>
 		<input type="resource" external name="http://purl.org/voc/hp/child" multiple />
@@ -46,11 +52,26 @@
 		<label>Schule</label>
 		<input type="resource" external name="http://purl.org/voc/hp/attendedSchool" multiple />
 
+		<label>Ordinationsdatum</label>
+		<input name="http://purl.org/voc/hp/dateOfOrdination" type="literal" datatype="xsd:date" />
+
+		<label>Ordinationsort</label>
+		<input name="http://purl.org/voc/hp/placeOfOrdination" type="resource" external />
+
+		<label>Ordinator</label>
+		<input name="http://purl.org/voc/hp/ordinator" type="resource" external />
+
 		<label>Pfarrstelle</label>
 		<input type="resource" external name="http://purl.org/voc/hp/hasPosition" multiple />
 
-		<label>Kommentar</label>
+		<label>Emeritierungsdatum</label>
+		<input name="http://purl.org/voc/hp/dateOfRetirement" type="literal" datatype="xsd:date" />
+
+		<label>Bemerkungen</label>
 		<input name="http://www.w3.org/2000/01/rdf-schema#comment" textarea type="literal" additional />
+
+		<label>Quellen/Literatur</label>
+		<input name="http://purl.org/voc/hp/sources" textarea type="literal" additional />
 
     </div>
 
