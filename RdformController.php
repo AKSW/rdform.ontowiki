@@ -27,7 +27,7 @@ class RdformController extends OntoWiki_Controller_Component
             $this->_abort('No model/resource selected.', OntoWiki_Message::ERROR);
         }
         
-        //$this->view->headLink()->appendStylesheet( $owApp->extensionManager->getComponentUrl('rdform') . 'js/lib/rdform/css/bootstrap.min.css' );
+        $this->view->headLink()->appendStylesheet( $owApp->extensionManager->getComponentUrl('rdform') . 'js/lib/rdform/css/bootstrap.min.css' );
         $this->view->headLink()->appendStylesheet( $owApp->extensionManager->getComponentUrl('rdform') . 'js/lib/rdform/css/rdform.css' );
         //$this->view->headLink()->appendStylesheet( $owApp->extensionManager->getComponentUrl('rdform') . 'js/lib/rdform/css/css/smoothness/jquery-ui.custom.min.css' );
 
