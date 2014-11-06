@@ -6,7 +6,7 @@ function OntoWikiConnection (urlBase){
 
     this.initRDForm = function ( data ) {
         $(".rdform").RDForm({
-            model: parent.urlBase + "extensions/rdform/public/form_pfarrerbuch.html",
+            template: parent.urlBase + "extensions/rdform/public/form_pfarrerbuch.html",
             hooks: parent.urlBase + "extensions/rdform/public/hooks_pfarrerbuch.js",
             //lang: parent.urlBase + "extensions/rdform/public/lang",
             data: data,
@@ -17,7 +17,7 @@ function OntoWikiConnection (urlBase){
                 var hash = $('#dataHash').val();
                 
                 self.updateResource( modelIri, resourceIri, hash, $(this)[0] );
-                //RDForm.outputResult();
+                //console.log( this[0] );
             }
         });
     };
