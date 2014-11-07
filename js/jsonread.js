@@ -2,14 +2,12 @@ function OntoWikiConnection (urlBase){
     var self = this;
     this.urlBase = urlBase;
     
+    // get resource from model. Callback returns the result
     this.getResource = function (modelIri, resourceIri, callback) {
-        //var data = null;
         var meta = new $.JsonRpcClient({ ajaxUrl: this.urlBase + '/resource' });
         meta.call(
                 'get', [modelIri, resourceIri, 'ntriples'],
-                function(result) {
-                    $('#editable').prop('checked', result.editable);
-                    $('#dataHash').val(result.dataHash);
+                function(result) {                
                     callback( result );
                 },
                 function(error)  { console.log('There was an error', error); }
@@ -28,6 +26,7 @@ function OntoWikiConnection (urlBase){
                 );
     };
 
+    // update resource in model. Callback returns the success of the update
     this.updateResource = function (modelIri, resourceIri, hash, data, callback) {
         jsonld.toRDF(
                 data, {format: 'application/nquads'},
