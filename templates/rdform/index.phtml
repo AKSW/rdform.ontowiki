@@ -1,24 +1,32 @@
 <?php
+
 $owApp = OntoWiki::getInstance();
 
 if ($this->has('redirectUri')): ?>
-    <input type="hidden" id="redirectUri" value="<?php echo $this->redirectUri ?>"/>
+	    <input type="hidden" id="redirectUri" value="<?php echo $this->redirectUri ?>"/>
 <?php endif; ?>
+</script>
 <input type="hidden" id="urlBase" value="<?php echo $this->urlBase ?>" />
 <input type="hidden" id="modelIri" label="model" value="<?php echo $this->selectedModel ?>" />
-<input type="hidden" id="resourceIri" label="resource" value="<?php echo $this->selectedResource ?>" />
-<input type="hidden" id="resourceId" label="resource" value="<?php echo abs( basename($this->selectedResource) ) ?>" />
-<input type="hidden" id="dataHash" label="dataHash" />
-<input type="hidden" id="editable" disabled="true" />
-
 <form action="#" class="form-horizontal rdform" role="form"></form>
 
 <script language="JavaScript">
 	var modelIri = '<?= $this->selectedModel ?>';
 	var resourceIri = '<?= $this->selectedResource ?>';
+	var redirectUri = $("#redirectUri").val();
 
-	var con = new OntoWikiConnection(urlBase + 'jsonrpc');
-	con.getResource( modelIri, resourceIri );
+	var owCon = new OntoWikiConnection(urlBase + 'jsonrpc');
+	owCon.getResource( modelIri, resourceIri, function( resData ) {
+		var owRdform = new OntoWikiRDForm();
+		
+		owRdform.initForm(resourceIri, resData, function( result ) {
+			var hash = owRdform.$elem.children('#dataHash').val();
+            
+            owCon.updateResource( modelIri, resourceIri, hash, result, function( updateResult ) {
+            	window.location.href = decodeURIComponent(redirectUri);
+            } );
+		});
+	});
 </script>
 
 <style type="text/css">
