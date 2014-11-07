@@ -12,7 +12,8 @@ RDForm_Hooks.prototype = {
 		var _this = this;
 
 		// get pid from existing resource
-		var resourceIri = _this.$elem.children("#resourceIri").val();
+		//var resourceIri = _this.$elem.children("#resourceIri").val();
+		var resourceIri = _this.$elem.data("resourceIri");
 		
 		var pID = resourceIri.split('/').reverse()[0];
 		pID = Math.abs( pID );
@@ -36,10 +37,28 @@ RDForm_Hooks.prototype = {
 		var _this = this;
 
 		_this.$elem.find( 'input[external]' ).each(function() {
-			$(this).hide();
+			/*
 			$(this).nextAll(".duplicate-external-resource").hide();
 			$(this).nextAll(".remove-external-resource").hide();
-			if ( $(this).val() != "" ) {			
+			*/			
+
+			if ( $(this).val() == ""  
+				//|| $(this).attr("multiple")
+				&& (   $(this).attr("name") == "http://purl.org/voc/hp/father" 
+					|| $(this).attr("name") == "http://purl.org/voc/hp/mother" 
+					|| $(this).attr("name") == "http://purl.org/voc/hp/spouse" 
+					)
+			) { 
+				// add create-new-bnt
+				var newExtResBtn = $('<button type="button" class="btn btn-default btn-xs create-new-external-resource" title=""><span class="glyphicon glyphicon-plus"></span> create</button>');
+				$(this).after(newExtResBtn);
+				_this.newExtResBtn( $(this), newExtResBtn );
+			}
+
+			// create links to the external resource
+			if ( $(this).val() != "" ) {
+				$(this).hide();
+				
 				var thisResource = $(this);
 				//var resLink = urlBase + "view/?r=" + $(thisResource).val()
 				var resLink = $(thisResource).val()
@@ -66,9 +85,45 @@ RDForm_Hooks.prototype = {
 					},
 					function(error)  { console.log('There was an error', error); }
 				);
-			}
+			} 
 		});	
 
+	},
+
+	newExtResBtn : function( res, btn ) {
+		
+		btn.click(function() {
+
+			res.hide();
+			btn.hide();
+
+			var modelIri = $("#modelIri").val();
+			var now = new Date();
+			var pID = now.getTime();
+			var resourceIri = 'http://pfarrerbuch.comiles.eu/sachsen/person/-'+pID;
+			//var redirectUri = $("#redirectUri").val();
+			var container = res.parent();
+
+			var owCon = new OntoWikiConnection(urlBase + 'jsonrpc');
+			owCon.getResource( modelIri, resourceIri, function( resData ) {
+				var hash = resData.dataHash;
+				var owRdform = new OntoWikiRDForm();
+				owRdform.$container = container;
+				owRdform.template = "PersonEasy";
+				//owRdform.$elem.css("marginLeft", "-35px");
+				
+				owRdform.initForm(resourceIri, resData, function( result ) {
+					var resultId = result["@id"];
+		            
+		            owCon.updateResource( modelIri, resourceIri, hash, result, function( updateResult ) {
+		            	owRdform.$elem.remove();
+		            	res.val( resultId );
+		            	res.show();
+		            } );
+				});
+			});
+
+		});
 	},
 
 	// after the addLiteral button was clicked
