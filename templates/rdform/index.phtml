@@ -17,10 +17,10 @@ if ($this->has('redirectUri')): ?>
 
 	var owCon = new OntoWikiConnection(urlBase + 'jsonrpc');
 	owCon.getResource( modelIri, resourceIri, function( resData ) {
+		var hash = resData.dataHash;		
 		var owRdform = new OntoWikiRDForm();
 		
 		owRdform.initForm(resourceIri, resData, function( result ) {
-			var hash = owRdform.$elem.children('#dataHash').val();
             
             owCon.updateResource( modelIri, resourceIri, hash, result, function( updateResult ) {
             	window.location.href = decodeURIComponent(redirectUri);
