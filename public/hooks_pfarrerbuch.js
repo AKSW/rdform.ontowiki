@@ -12,10 +12,14 @@ RDForm_Hooks.prototype = {
 		var _this = this;
 
 		// get pid from existing resource
-		//var resourceIri = $("#resourceIri").val();
-		//var pID = resourceIri.substring( resourceIri.indexOf("-") + 1 );
-		var pID = $("#resourceId").val();
+		var resourceIri = _this.$elem.children("#resourceIri").val();
+		
+		var pID = resourceIri.split('/').reverse()[0];
+		pID = Math.abs( pID );
+
 		_this.$elem.find( 'input[name="id"]' ).val( pID );
+
+		// get hidden birthYear and deathYear for the label
 		_this.$elem.on("keyup", 'input[name="http://purl.org/voc/hp/birthDate"]', function() {
 			var bYear = $(this).val().slice(0, 4);
 			_this.$elem.find('input[name="birthDate"]').val( bYear ).trigger("keyup");
