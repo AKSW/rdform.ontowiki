@@ -1,7 +1,7 @@
 <form prefix="rdf http://www.w3.org/1999/02/22-rdf-syntax-ns# xsd http://www.w3.org/2001/XMLSchema#">
 	<legend>Person/Pfarrer</legend>
 	<div typeof="http://xmlns.com/foaf/0.1/Person" resource="http://pfarrerbuch.comiles.eu/sachsen/person/-{id}">
-		<input name="id" type="hidden" />
+		<input name="id" type="hidden" value="{http://xmlns.com/foaf/0.1/name}" />
 		<input name="birthDate" type="hidden" value="{http://purl.org/voc/hp/birthDate}" />
 		<input name="deathDate" type="hidden" value="{http://purl.org/voc/hp/dateOfDeath}" />
 
@@ -35,19 +35,44 @@
 		<input name="http://purl.org/voc/hp/dateOfDeath" type="literal" datatype="xsd:date" />
 
 		<label>Sterbeort</label>
-		<input name="http://purl.org/voc/hp/placeOfDeath" type="resource" external />
+		<input type="resource" external name="http://purl.org/voc/hp/placeOfDeath" autocomplete
+			query-endpoint="http://pfarrerbuch.comiles.eu/sparql"
+            query-apitype="sparql"
+            query-datatype="json"
+            query="SELECT DISTINCT * WHERE {?item <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/voc/hp/Place>;<http://www.w3.org/2000/01/rdf-schema#label> ?label. FILTER regex(?label,%s,'i')}LIMIT 20"
+		/>
 
 		<label>Vater</label>
-		<input type="resource" external name="http://purl.org/voc/hp/father" />
+		<input type="resource" external name="http://purl.org/voc/hp/father" autocomplete
+			query-endpoint="http://pfarrerbuch.comiles.eu/sparql"
+            query-apitype="sparql"
+            query-datatype="json"
+            query="SELECT DISTINCT * WHERE {?item <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Person>;<http://www.w3.org/2000/01/rdf-schema#label> ?label. FILTER regex(?label,%s,'i')}LIMIT 20"
+		/>
 
 		<label>Mutter</label>
-		<input type="resource" external name="http://purl.org/voc/hp/mother" />
+		<input type="resource" external name="http://purl.org/voc/hp/mother" autocomplete
+			query-endpoint="http://pfarrerbuch.comiles.eu/sparql"
+            query-apitype="sparql"
+            query-datatype="json"
+            query="SELECT DISTINCT * WHERE {?item <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Person>;<http://www.w3.org/2000/01/rdf-schema#label> ?label. FILTER regex(?label,%s,'i')}LIMIT 20"
+		/>
 
 		<label>Ehepartner</label>
-		<input type="resource" external name="http://purl.org/voc/hp/spouse" />
+		<input type="resource" external name="http://purl.org/voc/hp/spouse" autocomplete
+			query-endpoint="http://pfarrerbuch.comiles.eu/sparql"
+            query-apitype="sparql"
+            query-datatype="json"
+            query="SELECT DISTINCT * WHERE {?item <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Person>;<http://www.w3.org/2000/01/rdf-schema#label> ?label. FILTER regex(?label,%s,'i')}LIMIT 20"
+		/>
 
 		<label>Kinder</label>
-		<input type="resource" external name="http://purl.org/voc/hp/child" multiple />
+		<input type="resource" external name="http://purl.org/voc/hp/child" multiple autocomplete
+			query-endpoint="http://pfarrerbuch.comiles.eu/sparql"
+            query-apitype="sparql"
+            query-datatype="json"
+            query="SELECT DISTINCT * WHERE {?item <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Person>;<http://www.w3.org/2000/01/rdf-schema#label> ?label. FILTER regex(?label,%s,'i')}LIMIT 20"
+		/>
 
 		<label>Schule</label>
 		<input type="resource" external name="http://purl.org/voc/hp/attendedSchool" multiple />
@@ -56,7 +81,12 @@
 		<input name="http://purl.org/voc/hp/dateOfOrdination" type="literal" datatype="xsd:date" />
 
 		<label>Ordinationsort</label>
-		<input name="http://purl.org/voc/hp/placeOfOrdination" type="resource" external />
+		<input type="resource" external name="http://purl.org/voc/hp/placeOfOrdination" autocomplete
+			query-endpoint="http://pfarrerbuch.comiles.eu/sparql"
+            query-apitype="sparql"
+            query-datatype="json"
+            query="SELECT DISTINCT * WHERE {?item <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/voc/hp/Place>;<http://www.w3.org/2000/01/rdf-schema#label> ?label. FILTER regex(?label,%s,'i')}LIMIT 20"
+		/>
 
 		<label>Ordinator</label>
 		<input name="http://purl.org/voc/hp/ordinator" type="resource" external />
