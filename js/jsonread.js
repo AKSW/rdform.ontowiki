@@ -2,42 +2,15 @@ function OntoWikiConnection (urlBase){
     var self = this;
     this.urlBase = urlBase;
     
-    this.initRDForm = function ( data ) {
-        $(".rdform").RDForm({
-            template: parent.urlBase + "extensions/rdform/public/form_pfarrerbuch.html",
-            hooks: parent.urlBase + "extensions/rdform/public/hooks_pfarrerbuch.js",
-            //lang: parent.urlBase + "extensions/rdform/public/lang",
-            data: data,
-
-            submit: function() {
-                var modelIri = $('#modelIri').val();
-                var resourceIri = $('#resourceIri').val();
-                var hash = $('#dataHash').val();
-                
-                self.updateResource( modelIri, resourceIri, hash, $(this)[0] );
-                //console.log( this[0] );
-            }
-        });        
-    };
-
     this.getResource = function (modelIri, resourceIri, callback) {
         //var data = null;
         var meta = new $.JsonRpcClient({ ajaxUrl: this.urlBase + '/resource' });
         meta.call(
                 'get', [modelIri, resourceIri, 'ntriples'],
                 function(result) {
-
                     $('#editable').prop('checked', result.editable);
                     $('#dataHash').val(result.dataHash);
-                    
-                    jsonld.fromRDF(
-                        result.data, 
-                        {format: 'application/nquads'},
-                        function(err, data) {
-                            //self.initRDForm( data );
-                            callback( data );
-                        }
-                    );
+                    callback( result );
                 },
                 function(error)  { console.log('There was an error', error); }
                 );
@@ -63,8 +36,6 @@ function OntoWikiConnection (urlBase){
                     meta.call(
                         'update', [modelIri, resourceIri, nquads, hash, 'ntriples'],
                         function(result) {
-                            //var redirectUri = $("#redirectUri").val();
-                            //window.location.href = decodeURIComponent(redirectUri);
                             callback(result);
                         },
                         function(error)  { console.log('There was an error', error); }
