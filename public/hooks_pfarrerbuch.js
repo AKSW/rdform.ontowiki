@@ -12,13 +12,12 @@ RDForm_Hooks.prototype = {
 		var _this = this;
 
 		// get pid from existing resource
-		//var resourceIri = _this.$elem.children("#resourceIri").val();
 		var resourceIri = _this.$elem.data("resourceIri");
-		
-		var pID = resourceIri.split('/').reverse()[0];
-		pID = Math.abs( pID );
-
-		_this.$elem.find( 'input[name="id"]' ).val( pID );
+		if ( typeof resourceIri !== 'undefined' ) {
+			var pID = resourceIri.split('/').reverse()[0];
+			pID = Math.abs( pID );
+			_this.$elem.find( 'input[name="id"]' ).val( pID );
+		}
 
 		// get hidden birthYear and deathYear for the label
 		_this.$elem.on("keyup", 'input[name="http://purl.org/voc/hp/birthDate"]', function() {
@@ -36,18 +35,15 @@ RDForm_Hooks.prototype = {
 	__afterInsertData : function() {
 		var _this = this;
 
+		// add external-links and create buttons
 		_this.$elem.find( 'input[external]' ).each(function() {
 			/*
 			$(this).nextAll(".duplicate-external-resource").hide();
 			$(this).nextAll(".remove-external-resource").hide();
 			*/			
 
-			if ( $(this).val() == ""  
-				//|| $(this).attr("multiple")
-				&& (   $(this).attr("name") == "http://purl.org/voc/hp/father" 
-					|| $(this).attr("name") == "http://purl.org/voc/hp/mother" 
-					|| $(this).attr("name") == "http://purl.org/voc/hp/spouse" 
-					)
+			if ( ( $(this).val() == ""  || $(this).attr("multiple") )
+				 && $(this).attr("typeof") == "http://xmlns.com/foaf/0.1/PersonEasy"
 			) { 
 				// add create-new-bnt
 				var newExtResBtn = $('<button type="button" class="btn btn-default btn-xs create-new-external-resource" title=""><span class="glyphicon glyphicon-plus"></span> create</button>');
@@ -98,31 +94,22 @@ RDForm_Hooks.prototype = {
 			btn.hide();
 
 			var modelIri = $("#modelIri").val();
-			var now = new Date();
-			var pID = now.getTime();
-			var resourceIri = 'http://pfarrerbuch.comiles.eu/sachsen/person/-'+pID;
-			//var redirectUri = $("#redirectUri").val();
-			var container = res.parent();
+			var container = res.parent();			
+			var template = "form_pfarrerbuch-" + $(res).attr("typeof").split('/').reverse()[0] + ".html";
 
-			var owCon = new OntoWikiConnection(urlBase + 'jsonrpc');
-			owCon.getResource( modelIri, resourceIri, function( resData ) {
-				var hash = resData.dataHash;
-				var owRdform = new OntoWikiRDForm();
-				owRdform.$container = container;
-				owRdform.template = "PersonEasy";
-				//owRdform.$elem.css("marginLeft", "-35px");
-				
-				owRdform.initForm(resourceIri, resData, function( result ) {
-					var resultId = result["@id"];
-		            
-		            owCon.updateResource( modelIri, resourceIri, hash, result, function( updateResult ) {
-		            	owRdform.$elem.remove();
-		            	res.val( resultId );
-		            	res.show();
-		            } );
+			var owRdform = new OntoWikiRDForm({
+				$container: container,
+				template: template,
+				hooks: "hooks_pfarrerbuch.js"
+			});
+			owRdform.init( function(result){ 
+				var hash = '40cd750bba9870f18aada2478b24840a';
+				owCon.updateResource( modelIri, result["@id"], hash, result, function( updateResult ) {
+					owRdform.settings.$elem.remove();
+					res.val( result["@id"] );
+					res.show();
 				});
 			});
-
 		});
 	},
 
@@ -133,7 +120,7 @@ RDForm_Hooks.prototype = {
 
 	// after the duplicateLiteral button was clicked
 	__afterDuplicateLiteral : function ( thisLiteral ) {
-		var _this = this;
+		var _this = this;		
 	},
 
 	// after the addClass button was clicked
@@ -150,7 +137,12 @@ RDForm_Hooks.prototype = {
 	__afterDuplicateExternalResource : function ( thisResource ) {
 		var _this = this;
 
+		// rempve btn create-new-ext-res
+		$(thisResource).find(".create-new-external-resource").remove();
+
+		// show inputs if hidden
 		$(thisResource).find("input").show();
+		// remove link to existing ext res
 		$(thisResource).find("a").remove();
 	},
 
