@@ -14,13 +14,18 @@ if ($this->has('redirectUri')): ?>
 	var modelIri = '<?= $this->selectedModel ?>';
 	var resourceIri = '<?= $this->selectedResource ?>';
 	var redirectUri = $("#redirectUri").val();
-
+	var template = "form_pfarrerbuch-Person.html";
+	
 	var owCon = new OntoWikiConnection(urlBase + 'jsonrpc');
 	owCon.getResource( modelIri, resourceIri, function( resData ) {
 		var hash = resData.dataHash;		
-		var owRdform = new OntoWikiRDForm();
+		var owRdform = new OntoWikiRDForm({
+			template: template,
+			hooks: "hooks_pfarrerbuch.js",
+			data: resData.data
+		});
 		
-		owRdform.initForm(resourceIri, resData, function( result ) {
+		owRdform.init( function( result ) {
             
             owCon.updateResource( modelIri, resourceIri, hash, result, function( updateResult ) {
             	window.location.href = decodeURIComponent(redirectUri);
