@@ -11,11 +11,17 @@ RDForm_Hooks.prototype = {
 	__initFormHandlers : function () {
 		var _this = this;
 
-		// get pid from existing resource
+		// get pid from existing resource and set as id if its the old integer resource...
 		var resourceIri = _this.$elem.data("resourceIri");
 		if ( typeof resourceIri !== 'undefined' ) {
 			var pID = resourceIri.split('/').reverse()[0];
-			pID = Math.abs( pID );
+			/*if ( typeof pID === 'number' ) {
+				pID = Math.abs( pID );
+				
+			} else {
+				pID = pID.replace(/^-/g, "");
+			}*/
+			pID = pID.replace(/^-/g, "");
 			_this.$elem.find( 'input[name="id"]' ).val( pID );
 		}
 
