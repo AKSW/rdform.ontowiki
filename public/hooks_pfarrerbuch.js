@@ -62,38 +62,45 @@ RDForm_Hooks.prototype = {
 				$(this).hide();
 				
 				var thisResource = $(this);
-				//var resLink = urlBase + "view/?r=" + $(thisResource).val()
 				var resLink = $(thisResource).val()
-				var meta = new $.JsonRpcClient({ ajaxUrl: urlBase + 'jsonrpc/resource' });
-		        meta.call(
-					'get', [modelIri, $(thisResource).val(), 'ntriples'],
-					function(result) {
-						jsonld.fromRDF(
-							result.data, 
-							{format: 'application/nquads'},
-							function(err, doc) {
-								if ( doc.length > 0 && doc[0].hasOwnProperty("http://www.w3.org/2000/01/rdf-schema#label") ) {
-									console.log( doc );
-									if ( doc[0]["@type"][0] ==  "http://purl.org/voc/hp/Position" ) {
-										$(thisResource).before('<a href="'+resLink+'">{Ort}, '+doc[0]["http://www.w3.org/2000/01/rdf-schema#label"][0]["@value"]+'</a>');
-									} else {
-										$(thisResource).before('<a href="'+resLink+'">'+doc[0]["http://www.w3.org/2000/01/rdf-schema#label"][0]["@value"]+'</a>');
-									}
-								} else {
-									var resLabel = $(thisResource).val();
-									var resDir = resLabel.substring( 0, resLabel.lastIndexOf("/"));
-									resDir = resDir.substring( resDir.lastIndexOf("/")+1 );
-									resLabel = resLabel.substring( resLabel.lastIndexOf("/")  );
-									$(thisResource).before('<a href="'+resLink+'">'+resDir+resLabel+'</a>');
-								}
-							}
-						);
-					},
-					function(error)  { console.log('There was an error', error); }
-				);
+				_this.getResourceData( $(thisResource).val(), function( data ){
+					console.log( data );
+					if ( data.length > 0 ) {
+						if ( data[0]["@type"][0] ==  "http://purl.org/voc/hp/Position" ) {
+							_this.getResourceData( data[0]["http://purl.org/voc/hp/place"][0]["@id"], function( ortData ){
+								$(thisResource).before('<a href="'+resLink+'">'+ortData[0]["http://www.w3.org/2000/01/rdf-schema#label"][0]["@value"]+', '+data[0]["http://www.w3.org/2000/01/rdf-schema#label"][0]["@value"]+'</a>');
+							});
+						} else if ( data[0]["@type"][0] ==  "http://purl.org/voc/hp/School" ) {
+							_this.getResourceData( data[0]["http://purl.org/voc/hp/place"][0]["@id"], function( ortData ){
+								$(thisResource).before('<a href="'+resLink+'">'+data[0]["http://purl.org/voc/hp/schoolType"][0]["@value"]+', '+ortData[0]["http://www.w3.org/2000/01/rdf-schema#label"][0]["@value"]+'</a>');
+							});
+						} else if ( data[0].hasOwnProperty("http://www.w3.org/2000/01/rdf-schema#label") ) {
+							$(thisResource).before('<a href="'+resLink+'">'+data[0]["http://www.w3.org/2000/01/rdf-schema#label"][0]["@value"]+'</a>');
+						} else {
+							$(thisResource).before('<a href="'+resLink+'">'+$(thisResource).val().split('/').reverse()[0]+'</a>');
+						}
+					} else {
+						var resLabel = $(thisResource).val();
+						var resDir = resLabel.substring( 0, resLabel.lastIndexOf("/"));
+						resDir = resDir.substring( resDir.lastIndexOf("/")+1 );
+						resLabel = resLabel.substring( resLabel.lastIndexOf("/")  );
+						$(thisResource).before('<a href="'+resLink+'">'+resDir+resLabel+'</a>');
+					}
+				});
 			} 
 		});	
+	},
 
+	getResourceData : function( resourceUri, callback ) {
+		owCon.getResource( modelIri, resourceUri, function( owConData ) {
+			jsonld.fromRDF(
+				owConData.data, 
+				{format: 'application/nquads'},
+				function(err, doc) {
+					callback( doc );
+				}
+			);
+		});
 	},
 
 	newExtResBtn : function( res, btn ) {
