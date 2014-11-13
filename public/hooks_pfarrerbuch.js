@@ -52,7 +52,7 @@ RDForm_Hooks.prototype = {
 				 && $(this).attr("typeof") == "http://xmlns.com/foaf/0.1/PersonEasy"
 			) { 
 				// add create-new-bnt
-				var newExtResBtn = $('<button type="button" class="btn btn-default btn-xs create-new-external-resource" title=""><span class="glyphicon glyphicon-plus"></span> create</button>');
+				var newExtResBtn = $('<button type="button" class="btn btn-default btn-xs create-new-external-resource" title=""><span class="glyphicon glyphicon-file"></span> neu</button>');
 				$(this).after(newExtResBtn);
 				_this.newExtResBtn( $(this), newExtResBtn );
 			}
