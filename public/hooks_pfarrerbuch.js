@@ -48,6 +48,7 @@ RDForm_Hooks.prototype = {
 			$(this).nextAll(".remove-external-resource").hide();
 			*/
 
+
 			if ( ( $(this).val() == ""  || $(this).attr("multiple") )
 				 && $(this).attr("typeof") == "http://xmlns.com/foaf/0.1/PersonEasy"
 			) { 
@@ -61,6 +62,10 @@ RDForm_Hooks.prototype = {
 			if ( $(this).val() != "" ) {
 				$(this).hide();
 				
+				if ( ! $(this).attr("multiple") || ( $(this).attr("multiple") && $(this).attr("index") == 1 ) ) {
+					$(this).after('<button type="button" class="btn btn-link btn-xs remove-first-external-resourcelink" title=""><span class="glyphicon glyphicon-remove"></span> entfernen</button>');
+				}
+
 				var thisResource = $(this);
 				var resLink = $(thisResource).val()
 				_this.getResourceData( $(thisResource).val(), function( data ){
@@ -87,8 +92,14 @@ RDForm_Hooks.prototype = {
 						$(thisResource).before('<a href="'+resLink+'">'+resDir+resLabel+'</a>');
 					}
 				});
-			} 
+			}
 		});	
+
+		$("body").on("click", ".remove-first-external-resourcelink", function() {
+			$(this).parent().find("a").remove();
+			$(this).parent().find("input").show().val("");
+			$(this).remove();
+		});
 	},
 
 	getResourceData : function( resourceUri, callback ) {
@@ -158,6 +169,8 @@ RDForm_Hooks.prototype = {
 
 		// rempve btn create-new-ext-res
 		$(thisResource).find(".create-new-external-resource").remove();
+
+		$(thisResource).find(".remove-first-external-resourcelink").remove();
 
 		// show inputs if hidden
 		$(thisResource).find("input").show();
