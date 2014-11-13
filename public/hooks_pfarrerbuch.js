@@ -64,7 +64,7 @@ RDForm_Hooks.prototype = {
 				var thisResource = $(this);
 				var resLink = $(thisResource).val()
 				_this.getResourceData( $(thisResource).val(), function( data ){
-					console.log( data );
+					//console.log( data );
 					if ( data.length > 0 ) {
 						if ( data[0]["@type"][0] ==  "http://purl.org/voc/hp/Position" ) {
 							_this.getResourceData( data[0]["http://purl.org/voc/hp/place"][0]["@id"], function( ortData ){
@@ -175,8 +175,13 @@ RDForm_Hooks.prototype = {
 		if ( item.hasOwnProperty("posLabel") ) {
 			item.label.value = item.label.value + ", " + item.posLabel.value;
 		}
-		else if ( item.hasOwnProperty("schoolLabel") ) {
-			item.label.value = item.label.value + ", " + item.schoolLabel.value;
+		else if ( item.hasOwnProperty("schoolType") ) {
+			if ( item.hasOwnProperty("schoolLabel") ) {
+				item.label.value = item.label.value + ", " + item.schoolLabel.value + " " + item.schoolType.value;
+			} else {
+				item.label.value = item.label.value + ", " + item.schoolType.value;
+			}
+			
 		}
 
 		return item;

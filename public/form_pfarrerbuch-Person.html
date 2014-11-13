@@ -75,12 +75,13 @@
 		/>
 
 		<label>Schule</label>
-		<input type="resource" external name="http://purl.org/voc/hp/attendedSchool" typeof="http://purl.org/voc/hp/attendedSchool" multiple autocomplete
+		<input type="resource" external name="http://purl.org/voc/hp/attendedSchool" typeof="http://purl.org/voc/hp/attendedSchool" placeholder="Ort oder Typ der Schule eingeben ..." multiple autocomplete
 			query-endpoint="http://pfarrerbuch.comiles.eu/sparql"
             query-apitype="sparql"
             query-datatype="json"
-            query="SELECT DISTINCT * WHERE { ?item <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/voc/hp/School>; <http://www.w3.org/2000/01/rdf-schema#label> ?schoolLabel; <http://purl.org/voc/hp/place> ?placeUri. ?placeUri <http://www.w3.org/2000/01/rdf-schema#label> ?label. FILTER regex(?schoolLabel,%s,'i')} LIMIT 20"
+            query="SELECT DISTINCT * WHERE { ?item <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/voc/hp/School>; <http://purl.org/voc/hp/schoolType> ?schoolType; <http://purl.org/voc/hp/place> ?placeUri. ?placeUri <http://www.w3.org/2000/01/rdf-schema#label> ?label. OPTIONAL { ?item <http://www.w3.org/2000/01/rdf-schema#label> ?schoolLabel } FILTER( regex(?label,%s,'i') || regex(?schoolType,%s,'i') ) } LIMIT 20"
 		/>
+		<!-- ?item, (CONCAT(?place, CONCAT(', ', ?posLabel)) AS ?label) -->
 
 		<label>Ordinationsdatum</label>
 		<input name="http://purl.org/voc/hp/dateOfOrdination" type="literal" datatype="xsd:date" />
@@ -102,7 +103,7 @@
 		/>
 
 		<label>Pfarrstelle</label>
-		<input type="resource" external name="http://purl.org/voc/hp/hasPosition" placeholder="Ort der Stelle eingeben..." multiple autocomplete
+		<input type="resource" external name="http://purl.org/voc/hp/hasPosition" placeholder="Ort der Stelle eingeben ..." multiple autocomplete
 			query-endpoint="http://pfarrerbuch.comiles.eu/sparql"
             query-apitype="sparql"
             query-datatype="json"
