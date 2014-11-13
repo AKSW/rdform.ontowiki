@@ -24,22 +24,22 @@
 		<input name="http://purl.org/voc/hp/birthDate" type="literal" datatype="xsd:date" />
 
 		<label>Geburtsort</label>
-		<input type="resource" external name="http://purl.org/voc/hp/birthPlace" autocomplete
+		<input type="resource" external name="http://purl.org/voc/hp/birthPlace" typeof="http://purl.org/voc/hp/Place" autocomplete 
 			query-endpoint="http://pfarrerbuch.comiles.eu/sparql"
             query-apitype="sparql"
             query-datatype="json"
-            query="SELECT DISTINCT * WHERE {?item <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/voc/hp/Place>;<http://www.w3.org/2000/01/rdf-schema#label> ?label. FILTER regex(?label,%s,'i')}LIMIT 20"
+            query="SELECT DISTINCT * WHERE {?item <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/voc/hp/Place>;<http://www.w3.org/2000/01/rdf-schema#label> ?label. FILTER regex(?label,%s,'i')} ORDER BY ?label LIMIT 20"
         />
 
 		<label>Sterbedatum</label>
 		<input name="http://purl.org/voc/hp/dateOfDeath" type="literal" datatype="xsd:date" />
 
 		<label>Sterbeort</label>
-		<input type="resource" external name="http://purl.org/voc/hp/placeOfDeath" autocomplete
+		<input type="resource" external name="http://purl.org/voc/hp/placeOfDeath" typeof="http://purl.org/voc/hp/Place" autocomplete
 			query-endpoint="http://pfarrerbuch.comiles.eu/sparql"
             query-apitype="sparql"
             query-datatype="json"
-            query="SELECT DISTINCT * WHERE {?item <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/voc/hp/Place>;<http://www.w3.org/2000/01/rdf-schema#label> ?label. FILTER regex(?label,%s,'i')}LIMIT 20"
+            query="SELECT DISTINCT * WHERE {?item <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/voc/hp/Place>;<http://www.w3.org/2000/01/rdf-schema#label> ?label. FILTER regex(?label,%s,'i')} ORDER BY ?label LIMIT 20"
 		/>
 
 		<label>Bemerkungen</label>
