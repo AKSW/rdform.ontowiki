@@ -43,11 +43,11 @@
 		/>
 
 		<label>Vater</label>
-		<input type="resource" external="http://pfarrerbuch.comiles.eu/sachsen/person/-{id}" name="http://purl.org/voc/hp/father" typeof="http://xmlns.com/foaf/0.1/PersonEasy" autocomplete
+		<input type="resource" external name="http://purl.org/voc/hp/father" typeof="http://xmlns.com/foaf/0.1/PersonEasy" autocomplete
 			query-endpoint="http://pfarrerbuch.comiles.eu/sparql"
             query-apitype="sparql"
             query-datatype="json"
-            query="SELECT DISTINCT * WHERE {?item <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Person>;<http://www.w3.org/2000/01/rdf-schema#label> ?label. FILTER regex(?label,%s,'i')}LIMIT 20"
+            query="SELECT DISTINCT * WHERE {?item <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Person>;<http://www.w3.org/2000/01/rdf-schema#label> ?label;<http://xmlns.com/foaf/0.1/lastName> ?lastName. FILTER regex(?lastName,%s,'i')} ORDER BY ?lastName LIMIT 20"
 		/>
 
 		<label>Mutter</label>
@@ -75,7 +75,12 @@
 		/>
 
 		<label>Schule</label>
-		<input type="resource" external name="http://purl.org/voc/hp/attendedSchool" multiple />
+		<input type="resource" external name="http://purl.org/voc/hp/attendedSchool" typeof="http://purl.org/voc/hp/attendedSchool" multiple autocomplete
+			query-endpoint="http://pfarrerbuch.comiles.eu/sparql"
+            query-apitype="sparql"
+            query-datatype="json"
+            query="SELECT DISTINCT * WHERE { ?item <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/voc/hp/School>; <http://www.w3.org/2000/01/rdf-schema#label> ?schoolLabel; <http://purl.org/voc/hp/place> ?placeUri. ?placeUri <http://www.w3.org/2000/01/rdf-schema#label> ?label. FILTER regex(?schoolLabel,%s,'i')} LIMIT 20"
+		/>
 
 		<label>Ordinationsdatum</label>
 		<input name="http://purl.org/voc/hp/dateOfOrdination" type="literal" datatype="xsd:date" />
@@ -89,7 +94,7 @@
 		/>
 
 		<label>Ordinator</label>
-		<input type="resource" external name="http://purl.org/voc/hp/ordinator" typeof="http://xmlns.com/foaf/0.1/PersonEasy" multiple autocomplete
+		<input type="resource" external name="http://purl.org/voc/hp/ordinator" typeof="http://xmlns.com/foaf/0.1/PersonEasy" autocomplete
 			query-endpoint="http://pfarrerbuch.comiles.eu/sparql"
             query-apitype="sparql"
             query-datatype="json"
@@ -97,7 +102,12 @@
 		/>
 
 		<label>Pfarrstelle</label>
-		<input type="resource" external name="http://purl.org/voc/hp/hasPosition" multiple />
+		<input type="resource" external name="http://purl.org/voc/hp/hasPosition" placeholder="Ort der Stelle eingeben..." multiple autocomplete
+			query-endpoint="http://pfarrerbuch.comiles.eu/sparql"
+            query-apitype="sparql"
+            query-datatype="json"
+            query="SELECT DISTINCT * WHERE { ?item <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/voc/hp/Position>; <http://www.w3.org/2000/01/rdf-schema#label> ?posLabel; <http://purl.org/voc/hp/place> ?placeUri. ?placeUri <http://www.w3.org/2000/01/rdf-schema#label> ?label. FILTER regex(?label,%s,'i')} LIMIT 20"
+		/>
 
 		<label>Emeritierungsdatum</label>
 		<input name="http://purl.org/voc/hp/dateOfRetirement" type="literal" datatype="xsd:date" />

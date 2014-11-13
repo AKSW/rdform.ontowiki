@@ -73,8 +73,12 @@ RDForm_Hooks.prototype = {
 							{format: 'application/nquads'},
 							function(err, doc) {
 								if ( doc.length > 0 && doc[0].hasOwnProperty("http://www.w3.org/2000/01/rdf-schema#label") ) {
-									//thisResource.attr( "title", doc[0]["http://www.w3.org/2000/01/rdf-schema#label"][0]["@value"]  ) ;
-									$(thisResource).before('<a href="'+resLink+'">'+doc[0]["http://www.w3.org/2000/01/rdf-schema#label"][0]["@value"]+'</a>');
+									console.log( doc );
+									if ( doc[0]["@type"][0] ==  "http://purl.org/voc/hp/Position" ) {
+										$(thisResource).before('<a href="'+resLink+'">{Ort}, '+doc[0]["http://www.w3.org/2000/01/rdf-schema#label"][0]["@value"]+'</a>');
+									} else {
+										$(thisResource).before('<a href="'+resLink+'">'+doc[0]["http://www.w3.org/2000/01/rdf-schema#label"][0]["@value"]+'</a>');
+									}
 								} else {
 									var resLabel = $(thisResource).val();
 									var resDir = resLabel.substring( 0, resLabel.lastIndexOf("/"));
@@ -156,6 +160,19 @@ RDForm_Hooks.prototype = {
 	__userInputValidation : function ( property ) {
 		var _this = this;
 		// return false if property value is not valid
+	},
+
+	__autocompleteGetItem : function( item ) {
+		//console.log( "hook ac: ", item );
+
+		if ( item.hasOwnProperty("posLabel") ) {
+			item.label.value = item.label.value + ", " + item.posLabel.value;
+		}
+		else if ( item.hasOwnProperty("schoolLabel") ) {
+			item.label.value = item.label.value + ", " + item.schoolLabel.value;
+		}
+
+		return item;
 	},
 
 
