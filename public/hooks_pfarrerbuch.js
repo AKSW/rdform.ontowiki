@@ -46,7 +46,7 @@ RDForm_Hooks.prototype = {
 			/*
 			$(this).nextAll(".duplicate-external-resource").hide();
 			$(this).nextAll(".remove-external-resource").hide();
-			*/			
+			*/
 
 			if ( ( $(this).val() == ""  || $(this).attr("multiple") )
 				 && $(this).attr("typeof") == "http://xmlns.com/foaf/0.1/PersonEasy"
@@ -111,13 +111,14 @@ RDForm_Hooks.prototype = {
 			btn.hide();
 
 			var modelIri = $("#modelIri").val();
-			var container = res.parent();			
+			var container = res.parent();
 			var template = "form_pfarrerbuch-" + $(res).attr("typeof").split('/').reverse()[0] + ".html";
 
 			var owRdform = new OntoWikiRDForm({
 				$container: container,
 				template: template,
-				hooks: "hooks_pfarrerbuch.js"
+				hooks: "hooks_pfarrerbuch.js",
+				lang: "pfarrerbuch_de.js",
 			});
 			owRdform.init( function(result){ 
 				var hash = '40cd750bba9870f18aada2478b24840a';
@@ -127,6 +128,7 @@ RDForm_Hooks.prototype = {
 					res.show();
 				});
 			});
+			owRdform.settings.$elem.find(".rdform-submit-btn-group div").prepend('<button type="reset" class="btn btn-default close-subrdform-btn">Abbrechen</button>  ');
 		});
 	},
 
@@ -137,7 +139,7 @@ RDForm_Hooks.prototype = {
 
 	// after the duplicateLiteral button was clicked
 	__afterDuplicateLiteral : function ( thisLiteral ) {
-		var _this = this;		
+		var _this = this;
 	},
 
 	// after the addClass button was clicked
@@ -182,6 +184,9 @@ RDForm_Hooks.prototype = {
 				item.label.value = item.label.value + ", " + item.schoolType.value;
 			}
 			
+		}
+		else if ( item.hasOwnProperty("lastName") ) {
+			item.label.value = item.lastName.value + ", " + item.label.value;
 		}
 
 		return item;
