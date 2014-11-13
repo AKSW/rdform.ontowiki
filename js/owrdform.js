@@ -5,6 +5,7 @@ function OntoWikiRDForm ( settings ){
 		data 		: null,
 		template 	: "form.html", // looking for the template file in: extensions/rdform/public/
 		hooks 		: "hooks.js", // looking for the hooks file in: extensions/rdform/public/		
+		lang 		: null,
 		$container 	: $(".active-tab-content"), // the container element for the form. In OntoWiki by default the content of the active tab
 		$elem 		: null, // the form element
 	};
@@ -47,7 +48,7 @@ OntoWikiRDForm.prototype = {
     	self.settings.$elem.RDForm({
             template: urlBase + "extensions/rdform/public/"+self.settings.template,
             hooks: urlBase + "extensions/rdform/public/"+self.settings.hooks,
-            //lang: parent.urlBase + "extensions/rdform/public/lang",
+            lang: urlBase + "extensions/rdform/public/"+self.settings.lang,
             debug: true,
             data: self.settings.data,
 
