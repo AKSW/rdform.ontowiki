@@ -1,11 +1,11 @@
 <form prefix="rdf http://www.w3.org/1999/02/22-rdf-syntax-ns# xsd http://www.w3.org/2001/XMLSchema#">
-	<legend>Person/Pfarrer</legend>
+	<legend>Person</legend>
 	<div typeof="http://xmlns.com/foaf/0.1/Person" resource="http://pfarrerbuch.comiles.eu/sachsen/person/-{id}">
 		<input name="id" type="hidden" value="{http://xmlns.com/foaf/0.1/name}" />
 		<input name="birthDate" type="hidden" value="{http://purl.org/voc/hp/birthDate}" />
 		<input name="deathDate" type="hidden" value="{http://purl.org/voc/hp/dateOfDeath}" />
 
-		<label>ist Pfarrer</label>
+		<label>„ist Pfarrer/Pfarrerin</label>
 		<input type="literal" boolean name="http://purl.org/voc/hp/isPastor" datatype="xsd:boolean" />
 
 		<label>Label</label>

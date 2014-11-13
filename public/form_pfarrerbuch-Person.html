@@ -1,11 +1,11 @@
 <form prefix="rdf http://www.w3.org/1999/02/22-rdf-syntax-ns# xsd http://www.w3.org/2001/XMLSchema#">
-	<legend>Person/Pfarrer</legend>
+	<legend>Person</legend>
 	<div typeof="http://xmlns.com/foaf/0.1/Person" resource="http://pfarrerbuch.comiles.eu/sachsen/person/-{id}">
 		<input name="id" type="hidden" value="{http://xmlns.com/foaf/0.1/name}" />
 		<input name="birthDate" type="hidden" value="{http://purl.org/voc/hp/birthDate}" />
 		<input name="deathDate" type="hidden" value="{http://purl.org/voc/hp/dateOfDeath}" />
 
-		<label>ist Pfarrer</label>
+		<label>„ist Pfarrer/Pfarrerin</label>
 		<input type="literal" boolean name="http://purl.org/voc/hp/isPastor" datatype="xsd:boolean" />
 
 		<label>Label</label>
@@ -28,7 +28,7 @@
 			query-endpoint="http://pfarrerbuch.comiles.eu/sparql"
             query-apitype="sparql"
             query-datatype="json"
-            query="SELECT DISTINCT * WHERE {?item <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/voc/hp/Place>;<http://www.w3.org/2000/01/rdf-schema#label> ?label. FILTER regex(?label,%s,'i')}LIMIT 20"
+            query="SELECT DISTINCT * WHERE {?item <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/voc/hp/Place>;<http://www.w3.org/2000/01/rdf-schema#label> ?label. FILTER regex(?label,%s,'i')} ORDER BY ?label LIMIT 20"
         />
 
 		<label>Sterbedatum</label>
@@ -39,7 +39,7 @@
 			query-endpoint="http://pfarrerbuch.comiles.eu/sparql"
             query-apitype="sparql"
             query-datatype="json"
-            query="SELECT DISTINCT * WHERE {?item <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/voc/hp/Place>;<http://www.w3.org/2000/01/rdf-schema#label> ?label. FILTER regex(?label,%s,'i')}LIMIT 20"
+            query="SELECT DISTINCT * WHERE {?item <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/voc/hp/Place>;<http://www.w3.org/2000/01/rdf-schema#label> ?label. FILTER regex(?label,%s,'i')} ORDER BY ?label LIMIT 20"
 		/>
 
 		<label>Vater</label>
@@ -55,7 +55,7 @@
 			query-endpoint="http://pfarrerbuch.comiles.eu/sparql"
             query-apitype="sparql"
             query-datatype="json"
-            query="SELECT DISTINCT * WHERE {?item <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Person>;<http://www.w3.org/2000/01/rdf-schema#label> ?label. FILTER regex(?label,%s,'i')}LIMIT 20"
+            query="SELECT DISTINCT * WHERE {?item <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Person>;<http://www.w3.org/2000/01/rdf-schema#label> ?label;<http://xmlns.com/foaf/0.1/lastName> ?lastName. FILTER regex(?lastName,%s,'i')} ORDER BY ?lastName LIMIT 20"
 		/>
 
 		<label>Ehepartner</label>
@@ -63,7 +63,7 @@
 			query-endpoint="http://pfarrerbuch.comiles.eu/sparql"
             query-apitype="sparql"
             query-datatype="json"
-            query="SELECT DISTINCT * WHERE {?item <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Person>;<http://www.w3.org/2000/01/rdf-schema#label> ?label. FILTER regex(?label,%s,'i')}LIMIT 20"
+            query="SELECT DISTINCT * WHERE {?item <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Person>;<http://www.w3.org/2000/01/rdf-schema#label> ?label;<http://xmlns.com/foaf/0.1/lastName> ?lastName. FILTER regex(?lastName,%s,'i')} ORDER BY ?lastName LIMIT 20"
 		/>
 
 		<label>Kinder</label>
@@ -71,7 +71,7 @@
 			query-endpoint="http://pfarrerbuch.comiles.eu/sparql"
             query-apitype="sparql"
             query-datatype="json"
-            query="SELECT DISTINCT * WHERE {?item <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Person>;<http://www.w3.org/2000/01/rdf-schema#label> ?label. FILTER regex(?label,%s,'i')}LIMIT 20"
+            query="SELECT DISTINCT * WHERE {?item <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Person>;<http://www.w3.org/2000/01/rdf-schema#label> ?label;<http://xmlns.com/foaf/0.1/lastName> ?lastName. FILTER regex(?lastName,%s,'i')} ORDER BY ?lastName LIMIT 20"
 		/>
 
 		<label>Schule</label>
@@ -79,7 +79,7 @@
 			query-endpoint="http://pfarrerbuch.comiles.eu/sparql"
             query-apitype="sparql"
             query-datatype="json"
-            query="SELECT DISTINCT * WHERE { ?item <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/voc/hp/School>; <http://purl.org/voc/hp/schoolType> ?schoolType; <http://purl.org/voc/hp/place> ?placeUri. ?placeUri <http://www.w3.org/2000/01/rdf-schema#label> ?label. OPTIONAL { ?item <http://www.w3.org/2000/01/rdf-schema#label> ?schoolLabel } FILTER( regex(?label,%s,'i') || regex(?schoolType,%s,'i') ) } LIMIT 20"
+            query="SELECT DISTINCT * WHERE { ?item <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/voc/hp/School>; <http://purl.org/voc/hp/schoolType> ?schoolType; <http://purl.org/voc/hp/place> ?placeUri. ?placeUri <http://www.w3.org/2000/01/rdf-schema#label> ?label. OPTIONAL { ?item <http://www.w3.org/2000/01/rdf-schema#label> ?schoolLabel } FILTER( regex(?label,%s,'i') || regex(?schoolType,%s,'i') ) } ORDER BY ?label LIMIT 20"
 		/>
 		<!-- ?item, (CONCAT(?place, CONCAT(', ', ?posLabel)) AS ?label) -->
 
@@ -91,7 +91,7 @@
 			query-endpoint="http://pfarrerbuch.comiles.eu/sparql"
             query-apitype="sparql"
             query-datatype="json"
-            query="SELECT DISTINCT * WHERE {?item <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/voc/hp/Place>;<http://www.w3.org/2000/01/rdf-schema#label> ?label. FILTER regex(?label,%s,'i')}LIMIT 20"
+            query="SELECT DISTINCT * WHERE {?item <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/voc/hp/Place>;<http://www.w3.org/2000/01/rdf-schema#label> ?label. FILTER regex(?label,%s,'i')} ORDER BY ?label LIMIT 20"
 		/>
 
 		<label>Ordinator</label>
@@ -99,7 +99,7 @@
 			query-endpoint="http://pfarrerbuch.comiles.eu/sparql"
             query-apitype="sparql"
             query-datatype="json"
-            query="SELECT DISTINCT * WHERE {?item <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Person>;<http://www.w3.org/2000/01/rdf-schema#label> ?label. FILTER regex(?label,%s,'i')}LIMIT 20"
+            query="SELECT DISTINCT * WHERE {?item <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Person>;<http://www.w3.org/2000/01/rdf-schema#label> ?label;<http://xmlns.com/foaf/0.1/lastName> ?lastName. FILTER regex(?lastName,%s,'i')} ORDER BY ?lastName LIMIT 20"
 		/>
 
 		<label>Pfarrstelle</label>
@@ -107,7 +107,7 @@
 			query-endpoint="http://pfarrerbuch.comiles.eu/sparql"
             query-apitype="sparql"
             query-datatype="json"
-            query="SELECT DISTINCT * WHERE { ?item <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/voc/hp/Position>; <http://www.w3.org/2000/01/rdf-schema#label> ?posLabel; <http://purl.org/voc/hp/place> ?placeUri. ?placeUri <http://www.w3.org/2000/01/rdf-schema#label> ?label. FILTER regex(?label,%s,'i')} LIMIT 20"
+            query="SELECT DISTINCT * WHERE { ?item <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/voc/hp/Position>; <http://www.w3.org/2000/01/rdf-schema#label> ?posLabel; <http://purl.org/voc/hp/place> ?placeUri. ?placeUri <http://www.w3.org/2000/01/rdf-schema#label> ?label. FILTER regex(?label,%s,'i')} ORDER BY ?label LIMIT 20"
 		/>
 
 		<label>Emeritierungsdatum</label>
