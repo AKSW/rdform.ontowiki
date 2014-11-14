@@ -46,8 +46,7 @@ RDForm_Hooks.prototype = {
 			_this.$elem.find('input[name="deathDate"]').val( dYear ).trigger("keyup");
 		});
 
-		// new hasPosition or attendedScholl subform on focux the external input
-
+		// new hasPosition or attendedScholl subform on focus the external input
 		_this.$elem.on("focus", "input[autocomplete]", function() {			
 			if ( $(this).attr("name") == "http://purl.org/voc/hp/hasPosition" || 
 				 $(this).attr("name") == "http://purl.org/voc/hp/attendedSchool" ) {
@@ -57,6 +56,12 @@ RDForm_Hooks.prototype = {
 				hasPostBtn.trigger("click");
 			}
 		});
+
+		// add label to form legend
+		/*_this.$elem.on("change", 'input[name="http://www.w3.org/2000/01/rdf-schema#label"]', function() {
+			//_this.$elem.find("legend").append(" " + $(this).val() );
+			console.log( $(this).val() );
+		});*/
 	},
 
 	// after instert existing data into the form
