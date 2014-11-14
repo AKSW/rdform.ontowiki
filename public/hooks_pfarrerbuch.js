@@ -25,6 +25,17 @@ RDForm_Hooks.prototype = {
 			_this.$elem.find( 'input[name="id"]' ).val( pID );
 		}
 
+		// set id and persiniri for Events: hasPosition and attendedSchool
+		if (_this.$elem.children("div").attr("typeof") == "http://purl.org/voc/hp/Event") {
+			var eID = new Date();
+			_this.$elem.find( 'input[name="id"]' ).val( eID.getTime() );
+			//var personIri = $('div[typeof="http://xmlns.com/foaf/0.1/Person"]').find('input[name="id"]').val();
+			var pClass = $('div[typeof="http://xmlns.com/foaf/0.1/Person"]');
+			var personIri = _this.rdform.replaceWildcards( pClass.attr("resource"), pClass );
+			//console.log(personIri);
+			_this.$elem.find( 'input[name="personIri"]' ).val( personIri["str"] );
+		}
+
 		// get hidden birthYear and deathYear for the label
 		_this.$elem.on("keyup", 'input[name="http://purl.org/voc/hp/birthDate"]', function() {
 			var bYear = $(this).val().slice(0, 4);
@@ -34,7 +45,18 @@ RDForm_Hooks.prototype = {
 			var dYear = $(this).val().slice(0, 4);
 			_this.$elem.find('input[name="deathDate"]').val( dYear ).trigger("keyup");
 		});
-	
+
+		// new hasPosition or attendedScholl subform on focux the external input
+
+		_this.$elem.on("focus", "input[autocomplete]", function() {			
+			if ( $(this).attr("name") == "http://purl.org/voc/hp/hasPosition" || 
+				 $(this).attr("name") == "http://purl.org/voc/hp/attendedSchool" ) {
+				//console.log("append new hasPosition form");
+				var hasPostBtn = $('<button></button>');
+				_this.newExtResBtn( $(this), hasPostBtn );
+				hasPostBtn.trigger("click");
+			}
+		});
 	},
 
 	// after instert existing data into the form
@@ -47,7 +69,6 @@ RDForm_Hooks.prototype = {
 			$(this).nextAll(".duplicate-external-resource").hide();
 			$(this).nextAll(".remove-external-resource").hide();
 			*/
-
 
 			if ( ( $(this).val() == ""  || $(this).attr("multiple") )
 				 && $(this).attr("typeof") == "http://xmlns.com/foaf/0.1/PersonEasy"
@@ -73,7 +94,9 @@ RDForm_Hooks.prototype = {
 					if ( data.length > 0 ) {
 						if ( data[0]["@type"][0] ==  "http://purl.org/voc/hp/Position" ) {
 							_this.getResourceData( data[0]["http://purl.org/voc/hp/place"][0]["@id"], function( ortData ){
-								$(thisResource).before('<a href="'+resLink+'">'+ortData[0]["http://www.w3.org/2000/01/rdf-schema#label"][0]["@value"]+', '+data[0]["http://www.w3.org/2000/01/rdf-schema#label"][0]["@value"]+'</a>');
+								_this.getResourceData( data[0]["http://purl.org/voc/hp/place"][0]["@id"], function( eventData ){
+									$(thisResource).before('<a href="'+resLink+'">'+ortData[0]["http://www.w3.org/2000/01/rdf-schema#label"][0]["@value"]+', '+data[0]["http://www.w3.org/2000/01/rdf-schema#label"][0]["@value"]+'</a>');
+								});
 							});
 						} else if ( data[0]["@type"][0] ==  "http://purl.org/voc/hp/School" ) {
 							_this.getResourceData( data[0]["http://purl.org/voc/hp/place"][0]["@id"], function( ortData ){
@@ -122,7 +145,9 @@ RDForm_Hooks.prototype = {
 			btn.hide();
 
 			var modelIri = $("#modelIri").val();
-			var container = res.parent();
+			//var container = res.parent();
+			var container = $('<div class="rdform-subform"></div>')
+			res.before(container);
 			var template = "form_pfarrerbuch-" + $(res).attr("typeof").split('/').reverse()[0] + ".html";
 
 			var owRdform = new OntoWikiRDForm({
@@ -133,9 +158,15 @@ RDForm_Hooks.prototype = {
 			});
 			owRdform.init( function(result){ 
 				var hash = '40cd750bba9870f18aada2478b24840a';
+				
 				owCon.updateResource( modelIri, result["@id"], hash, result, function( updateResult ) {
-					owRdform.settings.$elem.remove();
-					res.val( result["@id"] );
+					//owRdform.settings.$elem.remove();
+					container.remove();
+					if ( result["@type"] == "http://purl.org/voc/hp/Event" ) {
+						res.val( result["http://www.w3.org/1999/02/22-rdf-syntax-ns#object"][0]["@id"] );
+					} else {
+						res.val( result["@id"] );	
+					}					
 					res.show();
 				});
 			});
@@ -171,6 +202,15 @@ RDForm_Hooks.prototype = {
 		$(thisResource).find(".create-new-external-resource").remove();
 
 		$(thisResource).find(".remove-first-external-resourcelink").remove();
+
+		/*console.log( thisResource );
+		//var resourceInputType = $(thisResource).find("input").attr("name");
+		if ( $(thisResource).find("input").attr("name") == "http://purl.org/voc/hp/hasPosition" ) {
+				//console.log("append new hasPosition form");
+				var hasPostBtn = $('<button></button>');
+				_this.newExtResBtn( $(thisResource).find("input"), hasPostBtn );
+				hasPostBtn.trigger("click");
+			}*/
 
 		// show inputs if hidden
 		$(thisResource).find("input").show();
