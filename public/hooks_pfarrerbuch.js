@@ -23,6 +23,12 @@ RDForm_Hooks.prototype = {
 			}*/
 			pID = pID.replace(/^-/g, "");
 			_this.$elem.find( 'input[name="id"]' ).val( pID );
+		} else {			
+			var idInput = _this.$elem.find( 'input[name="id"]' );
+			if ( idInput.length > 0 && idInput.val() == "" ) {
+				var iD = new Date();
+				idInput.val( iD.getTime() );
+			}
 		}
 
 		// set id and persiniri for Events: hasPosition and attendedSchool
@@ -245,6 +251,9 @@ RDForm_Hooks.prototype = {
 		}
 		else if ( item.hasOwnProperty("lastName") ) {
 			item.label.value = item.lastName.value + ", " + item.label.value;
+		}
+		else if ( item.hasOwnProperty("district") ) {
+			item.label.value = item.label.value + " (" + item.district.value + ")";
 		}
 
 		return item;

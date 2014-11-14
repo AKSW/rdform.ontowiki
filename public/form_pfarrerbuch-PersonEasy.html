@@ -28,7 +28,7 @@
 			query-endpoint="http://pfarrerbuch.comiles.eu/sparql"
             query-apitype="sparql"
             query-datatype="json"
-            query="SELECT DISTINCT * WHERE {?item <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/voc/hp/Place>;<http://www.w3.org/2000/01/rdf-schema#label> ?label. FILTER regex(?label,%s,'i')} ORDER BY ?label LIMIT 20"
+            query="SELECT DISTINCT * WHERE {?item <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/voc/hp/Place>;<http://www.w3.org/2000/01/rdf-schema#label> ?label. OPTIONAL{ ?item <http://purl.org/voc/hp/district> ?district } FILTER regex(?label,%s,'i')} ORDER BY ?label LIMIT 20"
         />
 
 		<label>Sterbedatum</label>
@@ -39,7 +39,7 @@
 			query-endpoint="http://pfarrerbuch.comiles.eu/sparql"
             query-apitype="sparql"
             query-datatype="json"
-            query="SELECT DISTINCT * WHERE {?item <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/voc/hp/Place>;<http://www.w3.org/2000/01/rdf-schema#label> ?label. FILTER regex(?label,%s,'i')} ORDER BY ?label LIMIT 20"
+            query="SELECT DISTINCT * WHERE {?item <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/voc/hp/Place>;<http://www.w3.org/2000/01/rdf-schema#label> ?label. OPTIONAL{ ?item <http://purl.org/voc/hp/district> ?district } FILTER regex(?label,%s,'i')} ORDER BY ?label LIMIT 20"
 		/>
 
 		<label>Bemerkungen</label>
