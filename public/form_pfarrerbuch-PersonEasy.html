@@ -13,7 +13,7 @@
 		<input name="http://xmlns.com/foaf/0.1/name" value="{http://xmlns.com/foaf/0.1/firstName} {http://xmlns.com/foaf/0.1/lastName}" type="literal" readonly="" hidden />
 
 		<label>Geschlecht</label>
-		<input name="foaf:gender" type="literal" select select-options='{"female":"Frau", "male":"Mann"}'  datatype="xsd:string" />
+		<input name="foaf:gender" type="literal" select select-options='{"female":"weiblich", "male":"männlich"}'  datatype="xsd:string" />
 
 		<label>Vorname</label>
 		<input name="http://xmlns.com/foaf/0.1/firstName" type="literal" />
@@ -44,6 +44,9 @@
 		/>
 
 		<label>Bemerkungen</label>
+		<input name="http://www.w3.org/2000/01/rdf-schema#comment" textarea type="literal" additional />
+
+		<label>Bearbeitungs Kommentar</label>
 		<input name="http://purl.org/voc/hp/editorsComment" textarea type="literal" additional />
 
 		<label>Quellen/Literatur</label>
