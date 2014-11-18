@@ -11,6 +11,9 @@ RDForm_Hooks.prototype = {
 	__initFormHandlers : function () {
 		var _this = this;
 
+		//set model baseIri
+		_this.rdform.CONTEXT["@base"] = modelIri;
+
 		// get pid from existing resource and set as id if its the old integer resource...
 		var resourceIri = _this.$elem.data("resourceIri");
 		if ( typeof resourceIri !== 'undefined' ) {
@@ -105,8 +108,31 @@ RDForm_Hooks.prototype = {
 					if ( data.length > 0 ) {
 						if ( data[0]["@type"][0] ==  "http://purl.org/voc/hp/Position" ) {
 							_this.getResourceData( data[0]["http://purl.org/voc/hp/place"][0]["@id"], function( ortData ){
-								_this.getResourceData( data[0]["http://purl.org/voc/hp/place"][0]["@id"], function( eventData ){
-									$(thisResource).before('<a href="'+resLink+'">'+ortData[0]["http://www.w3.org/2000/01/rdf-schema#label"][0]["@value"]+', '+data[0]["http://www.w3.org/2000/01/rdf-schema#label"][0]["@value"]+'</a>');
+								var fromTo = "";
+								$.ajax({
+									url: "http://pfarrerbuch.comiles.eu/sparql",
+									dataType: "json",
+									data: {
+										query: "SELECT DISTINCT * WHERE {  ?event <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/voc/hp/Event> ; <http://www.w3.org/1999/02/22-rdf-syntax-ns#subject> <"+_this.rdform.settings.data[0]["@id"]+"> ; <http://www.w3.org/1999/02/22-rdf-syntax-ns#predicate> <http://purl.org/voc/hp/hasPosition> ; <http://www.w3.org/1999/02/22-rdf-syntax-ns#object> <"+data[0]["@id"]+"> . OPTIONAL { ?event <http://purl.org/voc/hp/start> ?start . } OPTIONAL { ?event <http://purl.org/voc/hp/end> ?end . } }",
+										format: "json"
+									},
+									success: function( data ) {
+										$.map( data.results.bindings, function( item ) {
+											if ( item.hasOwnProperty("start") ) {
+												fromTo += item.start.value.substring(0, 4);
+											}
+											if ( item.hasOwnProperty("end") ) {
+												fromTo += " - " + item.end.value.substring(0, 4);
+											}
+										});
+
+									},
+									error: function(e) {
+										console.log( 'Error on autocomplete: ' + e );
+									},
+									complete: function() {
+										$(thisResource).before('<a href="'+resLink+'">'+ortData[0]["http://www.w3.org/2000/01/rdf-schema#label"][0]["@value"]+', '+data[0]["http://www.w3.org/2000/01/rdf-schema#label"][0]["@value"]+' ('+ fromTo +')</a>');
+									},
 								});
 							});
 						} else if ( data[0]["@type"][0] ==  "http://purl.org/voc/hp/School" ) {
