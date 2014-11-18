@@ -24,7 +24,7 @@ RDForm_Hooks.prototype = {
 			} else {
 				pID = pID.replace(/^-/g, "");
 			}*/
-			pID = pID.replace(/^-/g, "");
+			//pID = pID.replace(/^-/g, "");
 			_this.$elem.find( 'input[name="id"]' ).val( pID );
 		} else {			
 			var idInput = _this.$elem.find( 'input[name="id"]' );
