@@ -8,11 +8,12 @@
 		<label>ist Pfarrer/Pfarrerin</label>
 		<input type="literal" boolean name="http://purl.org/voc/hp/isPastor" datatype="xsd:boolean" />
 
-		<label>Label</label>
 		<input name="http://www.w3.org/2000/01/rdf-schema#label" value="{http://xmlns.com/foaf/0.1/name} (*{birthDate} †{deathDate})" type="literal" readonly="" hidden />
 
-		<label>Name</label>
 		<input name="http://xmlns.com/foaf/0.1/name" value="{http://xmlns.com/foaf/0.1/firstName} {http://xmlns.com/foaf/0.1/lastName}" type="literal" readonly="" hidden />
+
+		<label>Geschlecht</label>
+		<input name="foaf:gender" type="literal" select select-options='{"woman":"Frau", "man":"Mann"}'  datatype="xsd:string" />
 
 		<label>Vorname</label>
 		<input name="http://xmlns.com/foaf/0.1/firstName" type="literal" />
@@ -43,10 +44,10 @@
 		/>
 
 		<label>Bemerkungen</label>
-		<input name="http://www.w3.org/2000/01/rdf-schema#comment" textarea type="literal" additional />
+		<input name="http://purl.org/voc/hp/editorsComment" textarea type="literal" additional />
 
 		<label>Quellen/Literatur</label>
-		<input name="http://purl.org/voc/hp/sources" textarea type="literal" additional />
+		<input name="http://purl.org/voc/hp/source" textarea type="literal" additional />
 
     </div>
 
