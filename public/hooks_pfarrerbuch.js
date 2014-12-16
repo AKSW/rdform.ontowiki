@@ -12,7 +12,7 @@ RDForm_Hooks.prototype = {
 		var _this = this;
 
 		//set model baseIri
-		_this.rdform.CONTEXT["@base"] = modelIri;
+		_this.rdform.MODEL["@base"] = modelIri;
 
 		// get pid from existing resource and set as id if its the old integer resource...
 		var resourceIri = _this.$elem.data("resourceIri");
@@ -55,7 +55,7 @@ RDForm_Hooks.prototype = {
 			_this.$elem.find('input[name="deathDate"]').val( dYear ).trigger("keyup");
 		});
 
-		// new hasPosition or attendedScholl subform on focus the external input
+		// new hasPosition or attendedSchool subform on focus the external input
 		_this.$elem.on("focus", "input[autocomplete]", function() {			
 			if ( $(this).attr("name") == "http://purl.org/voc/hp/hasPosition" || 
 				 $(this).attr("name") == "http://purl.org/voc/hp/attendedSchool" ) {
@@ -125,7 +125,6 @@ RDForm_Hooks.prototype = {
 												fromTo += " - " + item.end.value.substring(0, 4);
 											}
 										});
-
 									},
 									error: function(e) {
 										console.log( 'Error on autocomplete: ' + e );
@@ -144,6 +143,7 @@ RDForm_Hooks.prototype = {
 						} else {
 							$(thisResource).before('<a href="'+resLink+'">'+$(thisResource).val().split('/').reverse()[0]+'</a>');
 						}
+						//$(thisResource).after(' <button type="button" class="btn btn-link btn-xs edit-external-resource" title=""><span class="glyphicon glyphicon-pencil"></span>  bearbeiten</button>');
 					} else {
 						var resLabel = $(thisResource).val();
 						var resDir = resLabel.substring( 0, resLabel.lastIndexOf("/"));
@@ -160,6 +160,35 @@ RDForm_Hooks.prototype = {
 			$(this).parent().find("input").show().val("");
 			$(this).remove();
 		});
+
+		$("body").on("click", ".edit-external-resource", function() {
+			var modelIri = $("#modelIri").val();
+			var thisResouce = $(this).parent().find("input");
+			var resourceIri = $(thisResouce).val();
+			var container = $('<div class="rdform-subform"></div>')
+			thisResouce.before(container);
+			//var template = "form_pfarrerbuch-" + $(this).attr("data-resourceTemplate") + ".html";
+			var template = "form_pfarrerbuch-hasPosition.html";
+			console.log(resourceIri);
+
+			owCon.getResource( modelIri, resourceIri, function( resData ) {
+				var hash = resData.dataHash;
+				var owRdform = new OntoWikiRDForm({
+					$container: container,
+					template: template,
+					hooks: "hooks_pfarrerbuch.js",
+					lang: "pfarrerbuch_de.js",
+					data: resData.data
+				});
+				console.log(resData);
+			});
+			/*			
+			$(this).parent().find("a").remove();
+			$(this).parent().find("input").show().val("");
+			$(this).remove();
+			*/
+		});
+
 	},
 
 	getResourceData : function( resourceUri, callback ) {
@@ -239,6 +268,8 @@ RDForm_Hooks.prototype = {
 		$(thisResource).find(".create-new-external-resource").remove();
 
 		$(thisResource).find(".remove-first-external-resourcelink").remove();
+
+		$(thisResource).find(".edit-external-resource").remove();		
 
 		/*console.log( thisResource );
 		//var resourceInputType = $(thisResource).find("input").attr("name");
