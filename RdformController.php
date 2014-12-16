@@ -31,6 +31,8 @@ class RdformController extends OntoWiki_Controller_Component
         $this->view->headLink()->appendStylesheet( $owApp->extensionManager->getComponentUrl('rdform') . 'js/lib/rdform/css/rdform.css' );
         //$this->view->headLink()->appendStylesheet( $owApp->extensionManager->getComponentUrl('rdform') . 'js/lib/rdform/css/css/smoothness/jquery-ui.custom.min.css' );
 
+        /* Include promise for IE compatibility */
+        $this->view->headScript()->appendFile('//cdn.jsdelivr.net/g/es6-promise@1.0.0');
         $this->view->headScript()->appendFile($owApp->extensionManager->getComponentUrl('rdform') . 'js/lib/jquery.jsonrpcclient.js/jquery.jsonrpcclient.js');
         //$this->view->headScript()->appendFile($owApp->extensionManager->getComponentUrl('rdform') . 'js/lib/rdform/js/jquery-ui.custom.min.js');
         $this->view->headScript()->appendFile($owApp->extensionManager->getComponentUrl('rdform') . 'js/lib/jsonld.js/js/jsonld.js');
@@ -76,6 +78,8 @@ class RdformController extends OntoWiki_Controller_Component
     public function titlesAction()
     {
         $owApp = OntoWiki::getInstance();
+        /* Include promise for IE compatibility */
+        $this->view->headScript()->appendFile('//cdn.jsdelivr.net/g/es6-promise@1.0.0');
         $this->view->headScript()->appendFile($owApp->extensionManager->getComponentUrl('rdform') . 'js/lib/jquery.jsonrpcclient.js/jquery.jsonrpcclient.js');
         $this->view->headScript()->appendFile($owApp->extensionManager->getComponentUrl('rdform') . 'js/lib/jsonld.js/js/jsonld.js');
         $this->view->headScript()->appendFile($owApp->extensionManager->getComponentUrl('rdform') . 'js/jsonread.js');
