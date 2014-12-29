@@ -12,7 +12,7 @@ RDForm_Hooks.prototype = {
 		var _this = this;
 
 		//set model baseIri
-		_this.rdform.MODEL["@base"] = modelIri;
+		_this.rdform.MODEL[0]["@context"]["@base"] = modelIri;
 
 		// get pid from existing resource and set as id if its the old integer resource...
 		var resourceIri = _this.$elem.data("resourceIri");
@@ -154,6 +154,15 @@ RDForm_Hooks.prototype = {
 				});
 			}
 		});	
+
+		// autocorrect wrong gYear dates (XXXX-01-01T00:00:00Z)
+		_this.$elem.find( 'input[datatype="xsd:date"]' ).each(function() {
+			if ( $(this).val().search(/.*-01-01T00:00:00.*/) != -1 ) {
+				$(this).val( $(this).val().substring(0,4) );
+			} else if ( $(this).val().search(/.*-01T00:00:00.*/) != -1 ) {
+				$(this).val( $(this).val().substring(0,7) );
+			}
+		});
 
 		$("body").on("click", ".remove-first-external-resourcelink", function() {
 			$(this).parent().find("a").remove();
