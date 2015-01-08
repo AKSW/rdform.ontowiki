@@ -96,10 +96,6 @@ RDForm_Hooks.prototype = {
 			// create links to the external resource
 			if ( $(this).val() != "" ) {
 				$(this).hide();
-				
-				if ( ! $(this).attr("multiple") || ( $(this).attr("multiple") && $(this).attr("index") == 1 ) ) {
-					$(this).after('<button type="button" class="btn btn-link btn-xs remove-first-external-resourcelink" title=""><span class="glyphicon glyphicon-remove"></span> entfernen</button>');
-				}
 
 				var thisResource = $(this);
 				var resLink = $(thisResource).val()
@@ -162,12 +158,6 @@ RDForm_Hooks.prototype = {
 			} else if ( $(this).val().search(/.*-01T00:00:00.*/) != -1 ) {
 				$(this).val( $(this).val().substring(0,7) );
 			}
-		});
-
-		$("body").on("click", ".remove-first-external-resourcelink", function() {
-			$(this).parent().find("a").remove();
-			$(this).parent().find("input").show().val("");
-			$(this).remove();
 		});
 
 		$("body").on("click", ".edit-external-resource", function() {
@@ -275,8 +265,6 @@ RDForm_Hooks.prototype = {
 
 		// rempve btn create-new-ext-res
 		$(thisResource).find(".create-new-external-resource").remove();
-
-		$(thisResource).find(".remove-first-external-resourcelink").remove();
 
 		$(thisResource).find(".edit-external-resource").remove();		
 
