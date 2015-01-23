@@ -4,7 +4,7 @@ function OntoWikiRDForm ( settings ){
 	this.defaultSettings = {
 		data 		: null,
 		template 	: "form.html", // looking for the template file in: extensions/rdform/public/
-		hooks 		: "hooks.js", // looking for the hooks file in: extensions/rdform/public/		
+		hooks 		: "owrdform_hooks.js", // looking for the hooks file in: extensions/rdform/public/
 		lang 		: null,
 		$container 	: $(".active-tab-content"), // the container element for the form. In OntoWiki by default the content of the active tab
 		$elem 		: null, // the form element
