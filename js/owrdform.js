@@ -1,5 +1,5 @@
 function OntoWikiRDForm ( settings ){
-	var self = this;	
+	var self = this;
 
 	this.defaultSettings = {
 		data 		: null,
@@ -54,7 +54,7 @@ OntoWikiRDForm.prototype = {
 
             submit: function() {
             	var result = this[0];
-            	if ( self.settings.data ) {
+            	if ( result.length < 1 || self.settings.data ) {
             		callback( result );
             	} else {
 	            	var resourceIri = result["@id"];
@@ -63,6 +63,10 @@ OntoWikiRDForm.prototype = {
 	            		callback( result );
 	            	});
 	            }
+            },
+
+            abort : function() {
+            	callback( false );
             }
         });
     },
