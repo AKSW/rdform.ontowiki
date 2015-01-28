@@ -1,0 +1,9 @@
+<form base="http://catalogus-professorum.org/" prefix="cpm http://catalogus-professorum.org/cpm/ cpl http://catalogus-professorum.org/lipsiensium/ rdfs http://www.w3.org/2000/01/rdf-schema# hp http://purl.org/vok/hp/">
+  <legend>Publikationen</legend>
+  <div typeof="cpm:Publication" resource="cpl:Publication/{name}/{rdfs:label}" multiple>    
+
+    <label>Bezeichnung</label>
+    <input type="literal" textarea name="rdfs:label" datatype="xsd:string" />
+
+  </div>
+</form>

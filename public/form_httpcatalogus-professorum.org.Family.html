@@ -1,0 +1,36 @@
+<form base="http://catalogus-professorum.org/" prefix="cpm http://catalogus-professorum.org/cpm/ cpl http://catalogus-professorum.org/lipsiensium/ rdfs http://www.w3.org/2000/01/rdf-schema# hp http://purl.org/vok/hp/">
+  <legend>Familie</legend>
+  <div typeof="cpm:Family" resource="cpl:Family/{familyName}" multiple>
+    <p class="help">
+    Bitte entweder die elterliche Familie, d.h. Eltern und Kinder oder <br />
+    eigene Familie, d.h. Partner und Kinder.
+    </p>
+
+    <label>Mutter / Vater</label>
+    <input name="cpm:familyParent" type="resource" external multiple 
+      typeof="cpm:Person" subform="Person"
+      autocomplete query-endpoint="http://catalogus-professorum.org/sparql"
+      query-apitype="sparql" query-datatype="json"
+      query="SELECT DISTINCT * WHERE { { ?item rdf:type <http://catalogus-professorum.org/cpm/Person> } UNION { ?item rdf:type <http://catalogus-professorum.org/cpm/Professor> } ?item rdfs:label ?label . FILTER regex(?label,%s,'i')} ORDER BY ?label LIMIT 20"
+    />
+
+    <label>Frau / Mann</label>
+    <input name="cpm:familySpouse" type="resource" external multiple
+      typeof="cpm:Person" subform="Person"
+      autocomplete query-endpoint="http://catalogus-professorum.org/sparql"
+      query-apitype="sparql" query-datatype="json"
+      query="SELECT DISTINCT * WHERE { { ?item rdf:type <http://catalogus-professorum.org/cpm/Person> } UNION { ?item rdf:type <http://catalogus-professorum.org/cpm/Professor> } ?item rdfs:label ?label . FILTER regex(?label,%s,'i')} ORDER BY ?label LIMIT 20"
+    />
+
+    <label>Tocher / Sohn</label>
+    <input name="cpm:familyChild" type="resource" external multiple
+      typeof="cpm:Person" subform="Person"
+      autocomplete query-endpoint="http://catalogus-professorum.org/sparql"
+      query-apitype="sparql" query-datatype="json"
+      query="SELECT DISTINCT * WHERE { { ?item rdf:type <http://catalogus-professorum.org/cpm/Person> } UNION { ?item rdf:type <http://catalogus-professorum.org/cpm/Professor> } ?item rdfs:label ?label . FILTER regex(?label,%s,'i')} ORDER BY ?label LIMIT 20"
+    />
+    
+    <label>Anmerkung</label>
+    <input name="cpm:periodNote" textarea type="literal" datatype="xsd:string" additional />
+  </div>
+</form>

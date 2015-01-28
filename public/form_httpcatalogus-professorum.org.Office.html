@@ -1,0 +1,18 @@
+<form base="http://catalogus-professorum.org/" prefix="cpm http://catalogus-professorum.org/cpm/ cpl http://catalogus-professorum.org/lipsiensium/ rdfs http://www.w3.org/2000/01/rdf-schema# hp http://purl.org/vok/hp/">
+  <legend>Universitsämter</legend>
+  <div typeof="cpm:Office" resource="cpl:Office/{name}/{rdfs:label}" multiple>
+    <p class="help">Lehrstuhlinhaber /Ämter in Fakultäten, Sektionen oder Bereichen wie Direktoren und deren Stellvertreter, Sekretäre der Sektionen, WB- oder FB-Leiter, Klinikleiter etc. incl. Vorsitz in gesellschaftlichen Organisationen innerhalb der Universität.</p>
+
+    <label>Bezeichnung</label>
+    <input type="literal" name="rdfs:label" textarea datatype="xsd:string" />
+
+    <label>von</label>
+    <input type="literal" name="cpm:from" datatype="xsd:date" placeholder="JJJJ-MM" />
+
+    <label>bis</label>
+    <input type="literal" name="cpm:to" datatype="xsd:date" placeholder="JJJJ-MM" />
+
+    <label>Anmerkung</label>
+    <input name="cpm:periodNote" textarea type="literal" datatype="xsd:string" additional />
+  </div>
+</form>

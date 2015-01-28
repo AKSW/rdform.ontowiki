@@ -1,0 +1,19 @@
+<form base="http://catalogus-professorum.org/" prefix="cpm http://catalogus-professorum.org/cpm/ cpl http://catalogus-professorum.org/lipsiensium/ rdfs http://www.w3.org/2000/01/rdf-schema# hp http://purl.org/vok/hp/">
+  <legend>Tod</legend>
+  <div typeof="cpm:Death" resource="cpl:Death/{name}">
+    <input name="rdfs:label" type="literal" hidden value="Tod {cpm:date} in {(BASE)cpm:periodPlace}" />
+
+    <label>Datum</label>
+    <input name="cpm:date" type="literal" datatype="xsd:date" placeholder="JJJJ-MM-TT" />
+
+    <label>Ort</label>
+    <input name="cpm:periodPlace" type="resource" external 
+      autocomplete query-endpoint="http://catalogus-professorum.org/sparql"
+      query-apitype="sparql" query-datatype="json"
+      query="SELECT DISTINCT * WHERE {?item <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://ns.aksw.org/spatialHierarchy/City>;<http://www.w3.org/2000/01/rdf-schema#label> ?label. FILTER regex(?label,%s,'i')} ORDER BY ?label LIMIT 20"
+    />
+
+    <label>Anmerkung</label>
+    <input name="cpm:periodNote" textarea type="literal" datatype="xsd:string" additional />
+  </div>
+</form>
