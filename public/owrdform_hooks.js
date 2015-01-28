@@ -11,54 +11,35 @@ RDForm_Hooks.prototype = {
 	__initFormHandlers : function () {
 		var _this = this;
 
-		/*
-		// really write checked-attrs for checkboxes -> MASTER-BRANCH CANDIDATE
-		_this.$elem.on( 'click', 'input[type=checkbox]', function(){
-			$(this).attr("checked", $(this).prop("checked"));
+		// get arguments for a subform and set in resource class
+		var parentSubform = _this.$elem.parent(".rdform-subform");
+		if ( $(parentSubform).length > 0 ) {
+			if ( $(parentSubform).attr("arguments") !== undefined ) {
+				var args = $(parentSubform).attr("arguments");
+				_this.$elem.find("div[typeof]").attr("arguments", args);
+				_this.$elem.find("div[typeof]").data("rdform-model")["@rdform"]["arguments"] = $.parseJSON(args);
+			}
+			return false; // return, we dont want to dubble reinit all event handlers!
+		}
 
-		// really write textarea value to html
-		_this.$elem.on( 'change', 'textarea', function(){
-			$(this).text( $(this).val() );
-		});
-		*/
-
-		// change isForename checkbox value to 1/0
-		_this.$elem.on("change", 'input:checkbox', function() {
-			$(this).val( $(this).prop("checked") ? "1" : "0" );
-		});
-
-		// on change forename insert all forenames (rufname) into global input
-		_this.$elem.on("keyup change", 'div[typeof="cpm:Forename"]', function() {
-			var forenames = "";
-			
-			_this.$elem.find('div[typeof="cpm:Forename"]').each(function() {
-				if ( $(this).find('input[name="cpm:isFirstName"]').prop("checked") ) {
-					forenames += $(this).find('input[name="cpm:forename"]').val() + " ";
-				}
-			});
-
-			forenames = forenames.trim();
-			_this.$elem.find('input[name="forenames"]').val( forenames );
-			// trigger keyup handler to input
-			_this.$elem.find('input[name="forenames"]').trigger( "keyup" );
-
-		});
-
-		// big publication literal highlighting
-		//_this.$elem.find('label:contains("Veröffentlichungen / Publikationen")').first().parent().before("<div class='rdform-hidden-group'><legend>Veröffentlichungen, Literatur, Sonstiges</legend></div>");	
-
+		return true;
 	},
 
 	// on insert a existing resource into the form
 	// get and return i and di for asynchronus call
+	// i=relation, di=index, resource=resourceUri
 	__insertResource : function( i, di, resource, callback ) {
 		var _this = this;
 
-		if ( ! resource.hasOwnProperty("@type") ) { // it seemms to be an external resource, get data from ontowiki
+		if ( ! resource.hasOwnProperty("@type") ) { // it seems to be an external resource, get data from ontowiki
 			_this.getResourceData( resource["@id"], function( data ){
-				callback( i, di, data[0] );
+				if ( data.length == 0 ) { // no data found!
+					callback(i, di, resource);
+				} else {
+					callback( i, di, data[0] );	
+				}
+
 			});
-			
 		} else {
 			callback(i, di, resource);
 		}
@@ -67,12 +48,27 @@ RDForm_Hooks.prototype = {
 
 	// after instert existing data into the form
 	__afterInsertData : function() {
-		var _this = this;		
+		var _this = this;
 	},	
 
 	// after adding a property
 	__afterAddProperty : function ( thisPropertyContainer ) {
 		var _this = this;
+	},	
+
+	// on click edit-subform btn
+	__editSubform: function( resContainer ) {
+		var _this = this;
+		var resource = $(resContainer).find("input."+_this.rdform._ID_+"-property");
+		_this.getResourceData( $(resource).val(), function( data ){
+			_this.createSubform( $(resContainer), data[0]);
+		});
+	},
+
+	// on click new-subofrm btn
+	__newSubform : function( resContainer ) {
+		var _this = this;
+		_this.createSubform( $(resContainer), null);
 	},
 
 	// after adding a property
@@ -102,7 +98,7 @@ RDForm_Hooks.prototype = {
 		if ( $(property).attr("name") == "cpm:from" ) {
 			var from = Date.parse( $(property).val() );
 			var toEl = $(property).parentsUntil(".rdform-literal-group").parent().next().find('input[name="cpm:to"]');
-			var to = Date.parse( toEl.val() );		
+			var to = Date.parse( toEl.val() );	
 			if ( from >= to ) {
 				return false;
 			} else {
@@ -114,7 +110,7 @@ RDForm_Hooks.prototype = {
 		else if ( $(property).attr("name") == "cpm:to" ) {
 			var to = Date.parse( $(property).val() );
 			var fromEl = $(property).parentsUntil(".rdform-literal-group").parent().prev().find('input[name="cpm:from"]');
-			var from = Date.parse( fromEl.val() );		
+			var from = Date.parse( fromEl.val() );
 			if ( from >= to ) {
 				return false;
 			} else {
@@ -122,7 +118,7 @@ RDForm_Hooks.prototype = {
 					_this.rdform.userInputValidation( fromEl );
 				}
 			}
-		}	
+		}
 
 	},
 
@@ -146,29 +142,68 @@ RDForm_Hooks.prototype = {
 	/*
 	 Private functions
 	*/
+
+	// create a subform
+	createSubform: function( resContainer, data ) {
+		var _this = this;
+		var resource = $(resContainer).find("input."+_this.rdform._ID_+"-property");
+		var subformContainer = $('<div class="'+_this.rdform._ID_+'-subform"></div>');
+
+		if ( $(resource).attr("arguments") !== undefined ) {
+			$(subformContainer).attr("arguments", $(resource).attr("arguments") );
+		}
+		$(resContainer).append( $(subformContainer).hide() );
+
+		jsonld.toRDF( data, {format: 'application/nquads'}, function(err, nquads) {
+			var owRdform = new OntoWikiRDForm({
+				template: "form_" + urlBase.replace(/[^a-z0-9-_.]/gi,'') + "." + $(resource).attr("subform") + ".html",
+				$container: subformContainer,
+				data: nquads,
+				lang: "de.js",
+			});
+			owRdform.init( function(result){ 
+
+				if ( result ) {
+					var modelIri = $("#modelIri").val();
+					var hash = '40cd750bba9870f18aada2478b24840a'; // hash for empty resource
+					if ( data != null ) {
+						hash = data["@hash"];
+					}
+
+					owCon.updateResource( modelIri, result["@id"], hash, result, function( updateResult ) {
+						if ( updateResult == true ) {
+							$(resource).val( result["@id"] ).hide().trigger("blur");
+							$(resContainer).find('p.'+_this.rdform._ID_+'-resource-uri-container').remove();
+							var resourceLabel = result["@id"].split("/").reverse()[0];
+							if ( result.hasOwnProperty('http://www.w3.org/2000/01/rdf-schema#label') ) {
+								resourceLabel = result['http://www.w3.org/2000/01/rdf-schema#label'][0]['@value'];
+							}
+							$(resource).after('<p class="'+_this.rdform._ID_+'-resource-uri-container"><a href="'+result["@id"]+'" class="'+_this.rdform._ID_+'-resource-uri">'+resourceLabel+'</a></p>');
+						} else {
+							alert(updateResult);
+						}
+					});
+				}
+				$(resContainer).children().show();
+				$(subformContainer).remove();
+			});
+			$(resContainer).children().hide();
+			$(subformContainer).show("slow");
+		});
+	},
+
+	// get resource data. Wait if other 
 	getResourceData : function( resourceUri, callback ) {
 		var _this = this;
 
-		if ( _this.isGetResourceBusy ) {
-			// prev getResource is still busy, wait 200 ms
-			// TODO: implement a max timout
-			window.setTimeout(function(){ _this.getResourceData( resourceUri, callback ) },200);
-		} else {
-			_this.isGetResourceBusy = true;
-			_this.getResourceDataFct( resourceUri, function(data) {
-				callback(data);
-				_this.isGetResourceBusy = false;
-			} );
-		}
-	},
-
-	// get data of resource from ontowiki, return as jsonld object
-	getResourceDataFct : function( resourceUri, callback ) {
 		owCon.getResource( modelIri, resourceUri, function( owConData ) {
 			jsonld.fromRDF(
 				owConData.data, 
 				{format: 'application/nquads'},
 				function(err, doc) {
+					if ( doc.length > 0 ) {
+						doc[0]["@hash"] = owConData.dataHash;
+					}
 					callback( doc );
 				}
 			);
