@@ -11,6 +11,9 @@ RDForm_Hooks.prototype = {
 	__initFormHandlers : function () {
 		var _this = this;
 
+		if ( _this.owHooks && typeof _this.owHooks.__initFormHandlers !== "undefined" )
+			_this.owHooks.__initFormHandlers();
+
 		// get arguments for a subform and set in resource class
 		var parentSubform = _this.$elem.parent(".rdform-subform");
 		if ( $(parentSubform).length > 0 ) {
@@ -19,10 +22,10 @@ RDForm_Hooks.prototype = {
 				_this.$elem.find("div[typeof]").attr("arguments", args);
 				_this.$elem.find("div[typeof]").data("rdform-model")["@rdform"]["arguments"] = $.parseJSON(args);
 			}
-			return false; // return, we dont want to dubble reinit all event handlers!
+			//return false; // return, we dont want to dubble reinit all event handlers!
 		}
 
-		return true;
+		//return true;
 	},
 
 	// on insert a existing resource into the form
@@ -32,44 +35,41 @@ RDForm_Hooks.prototype = {
 		var _this = this;
 
 		if ( ! resource.hasOwnProperty("@type") ) { // it seems to be an external resource, get data from ontowiki
-			_this.getResourceData( resource["@id"], function( data ){
-				if ( data.length == 0 ) { // no data found!
-					callback(i, di, resource);
-				} else {
-					callback( i, di, data[0] );	
-				}
 
-			});
+			// get resource only if there is an input with subofrm attribute
+			var resourceInput = _this.rdform.getElement( _this.$elem.find("input"), 'name', i ).first();
+			if ( resourceInput.length > 0 &&  $(resourceInput).attr("typeof") !== undefined ) {
+				_this.getResourceData( resource["@id"], function( data ){
+					if ( data.length == 0 ) { // no data found!
+						callback(i, di, resource);
+					} else {
+						callback( i, di, data[0] );	
+					}
+				});
+			} else {
+				callback(i, di, resource);	
+			}
 		} else {
 			callback(i, di, resource);
 		}
-
 	},
 
 	// after instert existing data into the form
 	__afterInsertData : function() {
 		var _this = this;
+
+		if ( _this.owHooks && typeof _this.owHooks.__afterInsertData !== "undefined" )
+			_this.owHooks.__afterInsertData( );
+
+		_this.$elem.find("input[external]:not([hidden])").each( function() {
+			$(this).trigger("blur");
+		} );
 	},	
 
 	// after adding a property
 	__afterAddProperty : function ( thisPropertyContainer ) {
 		var _this = this;
 	},	
-
-	// on click edit-subform btn
-	__editSubform: function( resContainer ) {
-		var _this = this;
-		var resource = $(resContainer).find("input."+_this.rdform._ID_+"-property");
-		_this.getResourceData( $(resource).val(), function( data ){
-			_this.createSubform( $(resContainer), data[0]);
-		});
-	},
-
-	// on click new-subofrm btn
-	__newSubform : function( resContainer ) {
-		var _this = this;
-		_this.createSubform( $(resContainer), null);
-	},
 
 	// after adding a property
 	__afterDuplicateProperty : function ( thisPropertyContainer ) {
@@ -88,6 +88,65 @@ RDForm_Hooks.prototype = {
 	__beforeRemoveProperty : function ( thisPropertyContainer ) {
 		var _this = this;
 		var thisProperty = thisPropertyContainer.find("."+_this.rdform._ID_+"-property").first();
+	},
+
+	// after leave an external resource input field
+	__afterBlurExternalResource : function( thisResource ) {
+		var _this = this;
+		// get resource data and insert link
+		_this.getResourceData( $(thisResource).val(), function( dataNew ){
+			if ( dataNew.length != 0 ) { 
+				_this.restoreResource( thisResource, dataNew[0] );
+			}
+		});
+	},
+
+	// on click edit-subform btn
+	__editSubform: function( resContainer ) {
+		var _this = this;
+		var resource = $(resContainer).find("input."+_this.rdform._ID_+"-property");		
+		
+		if ( _this.owHooks && typeof _this.owHooks.__editSubform !== "undefined" )
+			_this.owHooks.__editSubform( resContainer );
+
+		// may get resousrce data from subform query
+		if ( $(resource).attr("subform-query") !== undefined ) {
+			var subformQuery = $(resource).attr("subform-query");
+
+			// tmp replace brackets for wildcard searching, replace THIS with this element value, reaplace wildcards
+			subformQuery = subformQuery.replace(/{ /g, '$BRACKET$ ').replace(/ }/g, ' $BRACKET$');
+			subformQuery = subformQuery.replace(/{THIS}/g, $(resource).val() );
+			subformQuery = _this.rdform.replaceWildcards( subformQuery, _this.$elem );
+			subformQuery = subformQuery["str"];
+			subformQuery = subformQuery.replace(/\$BRACKET\$ /g, '{ ').replace(/ \$BRACKET\$/g, ' }');
+			
+			$.ajax({
+				url: urlBase + "/sparql",
+				dataType: "json",
+				data: {
+					query: subformQuery,
+					format: "json"
+				},
+				success: function( data ) {
+					_this.getResourceData( data.results.bindings[0].event["value"], function( newData ){
+						_this.createSubform( $(resContainer), newData[0]);
+					});
+				},
+				error: function(e) {
+					console.log( 'Error on autocomplete: ', e );
+				},
+			});
+		} else {
+			_this.getResourceData( $(resource).val(), function( data ){
+				_this.createSubform( $(resContainer), data[0]);
+			});
+		}		
+	},
+
+	// on click new-subofrm btn
+	__newSubform : function( resContainer ) {
+		var _this = this;
+		_this.createSubform( $(resContainer), null );
 	},
 
 	// validate form-input on change value or on submit the form
@@ -122,6 +181,17 @@ RDForm_Hooks.prototype = {
 
 	},
 
+	// on get autocomplete item, may add individual label or value
+	// return Object: item.label.value, item.item.value
+	__autocompleteGetItem : function( item ) {
+		var _this = this;
+
+		if ( _this.owHooks && typeof _this.owHooks.__autocompleteGetItem !== "undefined" )
+			item = _this.owHooks.__autocompleteGetItem( item );
+
+		return item;
+	},
+
 	// before creating the result object from the html form
 	__createResult : function() {
 		var _this = this;
@@ -144,7 +214,7 @@ RDForm_Hooks.prototype = {
 	*/
 
 	// create a subform
-	createSubform: function( resContainer, data ) {
+	createSubform: function( resContainer, data, callback ) {
 		var _this = this;
 		var resource = $(resContainer).find("input."+_this.rdform._ID_+"-property");
 		var subformContainer = $('<div class="'+_this.rdform._ID_+'-subform"></div>');
@@ -166,19 +236,36 @@ RDForm_Hooks.prototype = {
 				if ( result ) {
 					var modelIri = $("#modelIri").val();
 					var hash = '40cd750bba9870f18aada2478b24840a'; // hash for empty resource
+					var subForm = $(subformContainer).find("div[typeof]").first();
 					if ( data != null ) {
 						hash = data["@hash"];
 					}
 
 					owCon.updateResource( modelIri, result["@id"], hash, result, function( updateResult ) {
 						if ( updateResult == true ) {
-							$(resource).val( result["@id"] ).hide().trigger("blur");
-							$(resContainer).find('p.'+_this.rdform._ID_+'-resource-uri-container').remove();
-							var resourceLabel = result["@id"].split("/").reverse()[0];
-							if ( result.hasOwnProperty('http://www.w3.org/2000/01/rdf-schema#label') ) {
-								resourceLabel = result['http://www.w3.org/2000/01/rdf-schema#label'][0]['@value'];
+							var resultUri = result["@id"];
+
+							if ( $(subForm).attr("id-return") !== undefined ) { // may get return-resource
+								resultUri = _this.rdform.replaceWildcards( $(subForm).attr("id-return"), $(subForm) );
+								resultUri = resultUri["str"];
 							}
-							$(resource).after('<p class="'+_this.rdform._ID_+'-resource-uri-container"><a href="'+result["@id"]+'" class="'+_this.rdform._ID_+'-resource-uri">'+resourceLabel+'</a></p>');
+							$(resource).val( resultUri );
+
+							if ( resultUri == result["@id"] ) {
+								//restoreResource( result );
+								_this.restoreResource( resource, result );
+							} else { // may get label for the new return-resource 
+								_this.getResourceData( resultUri, function( dataNew ){
+									if ( dataNew.length == 0 ) { // no dataNew found!
+										//restoreResource( result );
+										_this.restoreResource( resource, result );
+									} else {
+										//restoreResource( dataNew[0] );
+										_this.restoreResource( resource, dataNew[0] );
+									}
+								});
+
+							}							
 						} else {
 							alert(updateResult);
 						}
@@ -189,7 +276,49 @@ RDForm_Hooks.prototype = {
 			});
 			$(resContainer).children().hide();
 			$(subformContainer).show("slow");
+			
+			// TODO: dont duplcaite class on edit subform...			
+			//removeParentEventHandler( owRdform );			
 		});
+
+		// remove event handler in subform from parent RDForm
+		function removeParentEventHandler( subform ) {
+			var subform = subform.rdform._rdform_class;
+			//var parentHandler = _this.rdform.initFormHandler;
+			//subform.$elem.off("click", "button."+_this.rdform._ID_+"-duplicate-property", parentHandler.duplicateProperty );
+			console.log("BUG: duplicated Subform!", subform);
+			subform.$elem.off("change", "input" );
+			subform.$elem.off("click", "button."+_this.rdform._ID_+"-edit-subform" );
+			subform.$elem.off("click", "button."+_this.rdform._ID_+"-new-subform" );
+			subform.$elem.off("click", "button."+_this.rdform._ID_+"-add-property" );
+			subform.$elem.off("click", "button."+_this.rdform._ID_+"-duplicate-property" );
+			subform.$elem.off("click", "button."+_this.rdform._ID_+"-remove-property" );
+			subform.$elem.off("click", "div."+_this.rdform._ID_+"-edit-class-resource span" );
+			subform.$elem.off("keyup", "div."+_this.rdform._ID_+"-edit-class-resource input" );
+			subform.$elem.off("change blur", "div."+_this.rdform._ID_+"-edit-class-resource input" );
+			subform.$elem.off("blur", "input[external]" );
+			subform.$elem.off("focus", "input[autocomplete]" );
+			subform.$elem.off("change", "input[autocomplete]" );
+		}
+	},
+
+	// rewrite value and link of external resource from result
+	restoreResource : function( resource, result ) {
+		var _this = this;
+		var resultUri = result["@id"];
+		var resourceLabel = resultUri.split("/").reverse()[0];
+		var resContainer = $(resource).parentsUntil(".form-group").parent();
+		$(resContainer).find('p.'+_this.rdform._ID_+'-resource-uri-container').remove();
+		$(resource).hide();
+
+		if ( _this.owHooks && typeof _this.owHooks.__restoreResource !== "undefined" )
+			_this.owHooks.__restoreResource( resource, result );		
+		
+		if ( result.hasOwnProperty('http://www.w3.org/2000/01/rdf-schema#label') ) {
+			resourceLabel = result['http://www.w3.org/2000/01/rdf-schema#label'][0]['@value'];
+		}
+
+		$(resource).after('<p class="'+_this.rdform._ID_+'-resource-uri-container"><a href="'+resultUri+'" class="'+_this.rdform._ID_+'-resource-uri">'+resourceLabel+'</a></p>');
 	},
 
 	// get resource data. Wait if other 
@@ -216,10 +345,26 @@ RDForm_Hooks.prototype = {
 RDForm_Hooks class. Normally you dont need to edit this
 */
 function RDForm_Hooks( rdform ) {
-	this.rdform = rdform;
-	this.$elem = rdform.$elem;
+	var _this = this;
+	_this.rdform = rdform;
+	_this.$elem = rdform.$elem;
+	_this.owHooks = null;
 
-	this.isGetResourceBusy = false;
+	if ( _this.rdform.settings.owHooks ) {
+		$.ajax({ url: _this.rdform.settings.owHooks, dataType: "script", async: false,
+			success: function() {
+				try {
+					_this.owHooks = new RDForm_OntoWiki_Hooks( _this.rdform, _this );
+				} catch (e) {
+					_this.rdform.showAlert( "error", 'Cannot init hooks file "'+ _this.rdform.settings.owHooks +'": '+e );
+				}
+			},
+			error: function( jqxhr, type, e ) {
+				_this.rdform.showAlert( "error", 'Cannot load hooks file "'+ _this.rdform.settings.owHooks +'": '+e );
+			}
+		});
+	}
 
+	
 	return this;
 }
