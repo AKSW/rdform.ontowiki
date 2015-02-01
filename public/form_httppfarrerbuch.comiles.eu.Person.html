@@ -1,0 +1,125 @@
+<form base="http://pfarrerbuch.comiles.eu/sachsen/" prefix="hp http://purl.org/voc/hp/ rdf http://www.w3.org/1999/02/22-rdf-syntax-ns# rdfs http://www.w3.org/2000/01/rdf-schema# foaf http://xmlns.com/foaf/0.1/ xsd http://www.w3.org/2001/XMLSchema#">
+	<legend>Person</legend>
+	<div typeof="foaf:Person" resource="person/{foaf:name}">
+		<input name="classUri" type="hidden" value="{rdform-classUri}" />
+		<input name="birthDate" type="hidden" value="{hp:birthDate}" />
+		<input name="deathDate" type="hidden" value="{hp:dateOfDeath}" />
+
+		<label>ist Pfarrer/Pfarrerin</label>
+		<input type="literal" boolean name="hp:isPastor" datatype="xsd:boolean" />
+
+		<input name="rdfs:label" value="{foaf:name} (*{birthDate} †{deathDate})" type="literal" readonly="" hidden="" />		
+
+		<input name="foaf:name" value="{foaf:firstName} {foaf:lastName}" type="literal" readonly="" hidden />
+
+		<label>Geschlecht</label>
+		<input name="foaf:gender" type="literal" select select-options='{"female":"weiblich", "male":"männlich"}'  datatype="xsd:string" />
+
+		<label>Vorname</label>
+		<input name="foaf:firstName" type="literal" />
+
+		<label>Nachname</label>
+		<input name="foaf:lastName" type="literal" />
+
+		<label>Namensvariante</label>
+		<input name="hp:nameVariant" type="literal" />
+
+		<label>Geburtsdatum</label>
+		<input name="hp:birthDate" type="literal" datatype="xsd:date" placeholder="JJJJ-MM-TT" />
+
+		<label>Geburtsort</label>
+		<input type="resource" external name="hp:birthPlace" autocomplete 
+			query-endpoint="http://pfarrerbuch.comiles.eu/sparql" query-apitype="sparql" query-datatype="json"
+            query="SELECT DISTINCT * WHERE {?item <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/voc/hp/Place>;<http://www.w3.org/2000/01/rdf-schema#label> ?label. OPTIONAL{ ?item <http://purl.org/voc/hp/district> ?district } FILTER regex(?label,%s,'i')} ORDER BY ?label LIMIT 20"
+        />
+
+		<label>Sterbedatum</label>
+		<input name="hp:dateOfDeath" type="literal" datatype="xsd:date" placeholder="JJJJ-MM-TT" />
+
+		<label>Sterbeort</label>
+		<input type="resource" external name="hp:placeOfDeath" typeof="hp:Place" autocomplete
+			query-endpoint="http://pfarrerbuch.comiles.eu/sparql" query-apitype="sparql" query-datatype="json"
+            query="SELECT DISTINCT * WHERE {?item <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/voc/hp/Place>;<http://www.w3.org/2000/01/rdf-schema#label> ?label. OPTIONAL{ ?item <http://purl.org/voc/hp/district> ?district } FILTER regex(?label,%s,'i')} ORDER BY ?label LIMIT 20"
+		/>
+
+		<label>Vater</label>
+		<input type="resource" external name="hp:father"
+			subform="PersonPlain"
+			autocomplete query-endpoint="http://pfarrerbuch.comiles.eu/sparql" query-apitype="sparql" query-datatype="json"
+            query="SELECT DISTINCT * WHERE {?item <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Person>;<http://www.w3.org/2000/01/rdf-schema#label> ?label;<http://xmlns.com/foaf/0.1/lastName> ?lastName. FILTER regex(?lastName,%s,'i')} ORDER BY ?lastName LIMIT 20"
+		/>
+
+		<label>Mutter</label>
+		<input type="resource" external name="hp:mother"
+			subform="PersonPlain"
+			autocomplete query-endpoint="http://pfarrerbuch.comiles.eu/sparql" query-apitype="sparql" query-datatype="json"
+            query="SELECT DISTINCT * WHERE {?item <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Person>;<http://www.w3.org/2000/01/rdf-schema#label> ?label;<http://xmlns.com/foaf/0.1/lastName> ?lastName. FILTER regex(?lastName,%s,'i')} ORDER BY ?lastName LIMIT 20"
+		/>
+
+		<label>Ehepartner</label>
+		<input type="resource" external name="hp:spouse" 
+			subform="PersonPlain"
+			autocomplete query-endpoint="http://pfarrerbuch.comiles.eu/sparql" query-apitype="sparql" query-datatype="json"
+            query="SELECT DISTINCT * WHERE {?item <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Person>;<http://www.w3.org/2000/01/rdf-schema#label> ?label;<http://xmlns.com/foaf/0.1/lastName> ?lastName. FILTER regex(?lastName,%s,'i')} ORDER BY ?lastName LIMIT 20"
+		/>
+
+		<label>Kinder</label>
+		<input type="resource" external name="hp:child" multiple 
+			subform="PersonPlain"
+			autocomplete query-endpoint="http://pfarrerbuch.comiles.eu/sparql" query-apitype="sparql" query-datatype="json"
+            query="SELECT DISTINCT * WHERE {?item <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Person>;<http://www.w3.org/2000/01/rdf-schema#label> ?label;<http://xmlns.com/foaf/0.1/lastName> ?lastName. FILTER regex(?lastName,%s,'i')} ORDER BY ?lastName LIMIT 20"
+		/>
+
+		<label>Schulbesuch</label>
+		<!-- ?item, (CONCAT(?place, CONCAT(', ', ?posLabel)) AS ?label) -->
+		<input type="resource" external name="hp:attendedSchool" placeholder="Ort oder Typ der Schule eingeben ..." multiple 
+			subform="attendedSchool" arguments='{"classUri":"{classUri}", "classLabel":"{foaf:name}"}'
+			
+			subform-query="SELECT DISTINCT * WHERE { ?event <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/voc/hp/Event> ; <http://www.w3.org/1999/02/22-rdf-syntax-ns#subject> <{classUri}> ; <http://www.w3.org/1999/02/22-rdf-syntax-ns#predicate> <http://purl.org/voc/hp/attendedSchool> ; <http://www.w3.org/1999/02/22-rdf-syntax-ns#object> <{THIS}> . }"
+			
+			autocomplete query-endpoint="http://pfarrerbuch.comiles.eu/sparql" query-apitype="sparql" query-datatype="json"            
+            query="SELECT DISTINCT * WHERE { ?item <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/voc/hp/School>; <http://purl.org/voc/hp/schoolType> ?schoolType; <http://purl.org/voc/hp/place> ?placeUri. ?placeUri <http://www.w3.org/2000/01/rdf-schema#label> ?label. OPTIONAL { ?item <http://www.w3.org/2000/01/rdf-schema#label> ?schoolLabel } FILTER( regex(?label,%s,'i') || regex(?schoolType,%s,'i') ) } ORDER BY ?label LIMIT 20"
+		/>		
+
+		<label>Ordinationsdatum</label>
+		<input name="hp:dateOfOrdination" type="literal" datatype="xsd:date" placeholder="JJJJ-MM-TT" />
+
+		<label>Ordinationsort</label>
+		<input type="resource" external name="hp:placeOfOrdination" 
+			subform="Place"
+			autocomplete query-endpoint="http://pfarrerbuch.comiles.eu/sparql" query-apitype="sparql" query-datatype="json"
+            query="SELECT DISTINCT * WHERE {?item <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/voc/hp/Place>;<http://www.w3.org/2000/01/rdf-schema#label> ?label. OPTIONAL{ ?item <http://purl.org/voc/hp/district> ?district } FILTER regex(?label,%s,'i')} ORDER BY ?label LIMIT 20"
+		/>
+
+		<label>Ordinator</label>
+		<input type="resource" external name="hp:ordinator"
+			subform="PersonPlain"
+			autocomplete query-endpoint="http://pfarrerbuch.comiles.eu/sparql" query-apitype="sparql" query-datatype="json"
+            query="SELECT DISTINCT * WHERE {?item <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Person>;<http://www.w3.org/2000/01/rdf-schema#label> ?label;<http://xmlns.com/foaf/0.1/lastName> ?lastName. FILTER regex(?lastName,%s,'i')} ORDER BY ?lastName LIMIT 20"
+		/>
+		
+		<label>Pfarrstelle</label>
+		<input type="resource" external name="hp:hasPosition" placeholder="Ort der Stelle eingeben ..." multiple
+			subform="hasPosition" arguments='{"classUri":"{classUri}", "classLabel":"{foaf:name}"}'
+			
+			subform-query="SELECT DISTINCT * WHERE { ?event <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/voc/hp/Event> ; <http://www.w3.org/1999/02/22-rdf-syntax-ns#subject> <{classUri}> ; <http://www.w3.org/1999/02/22-rdf-syntax-ns#predicate> <http://purl.org/voc/hp/hasPosition> ; <http://www.w3.org/1999/02/22-rdf-syntax-ns#object> <{THIS}> . }"
+			
+			autocomplete query-endpoint="http://pfarrerbuch.comiles.eu/sparql" query-apitype="sparql" query-datatype="json"
+            query="SELECT DISTINCT * WHERE { ?item <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/voc/hp/Position>; <http://www.w3.org/2000/01/rdf-schema#label> ?posLabel; <http://purl.org/voc/hp/place> ?placeUri. ?placeUri <http://www.w3.org/2000/01/rdf-schema#label> ?label. FILTER regex(?label,%s,'i')} ORDER BY ?label LIMIT 20"
+		/>
+
+		<label>Emeritierungsdatum</label>
+		<input name="hp:dateOfRetirement" type="literal" datatype="xsd:date" placeholder="JJJJ-MM-TT" />
+
+		<label>Bemerkungen</label>
+		<input name="rdfs:comment" textarea type="literal" additional />
+
+		<label>Bearbeitungs Kommentar</label>
+		<input name="hp:editorsComment" textarea type="literal" additional />
+
+		<label>Quellen/Literatur</label>
+		<input name="hp:source" textarea type="literal" additional />
+
+    </div>
+
+</form>
