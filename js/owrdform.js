@@ -5,14 +5,17 @@ function OntoWikiRDForm ( settings ){
 		data 		: null,
 		template 	: "form.html", // looking for the template file in: extensions/rdform/public/
 		hooks 		: "owrdform_hooks.js", // looking for the hooks file in: extensions/rdform/public/
+		owHooks		: "hooks_"+urlBase.replace(/[^a-z0-9-_.]/gi,'')+".js",
 		lang 		: null,
 		$container 	: $(".active-tab-content"), // the container element for the form. In OntoWiki by default the content of the active tab
 		$elem 		: null, // the form element
 	};
 
 	// merge default settings with given settings
+	this.rdform = null;
 	this.settings = $.extend({}, self.defaultSettings, settings || {});
 }
+
 
 OntoWikiRDForm.prototype = {
 
@@ -38,16 +41,16 @@ OntoWikiRDForm.prototype = {
 		} else {
 			self.run( function(res) { callback( res ) } );
 		}
-
-		
 	},
 
 	// run the rdform-plugin
     run: function( callback) {
     	var self = this;
-    	self.settings.$elem.RDForm({
-            template: urlBase + "extensions/rdform/public/"+self.settings.template,
+    	
+    	var rdform = self.settings.$elem.RDForm({
+            template: urlBase + "extensions/rdform/public/"+self.settings.template,            
             hooks: urlBase + "extensions/rdform/public/"+self.settings.hooks,
+            owHooks: urlBase + "extensions/rdform/public/"+self.settings.owHooks,
             lang: urlBase + "extensions/rdform/public/"+self.settings.lang,
             debug: true,
             data: self.settings.data,
@@ -68,7 +71,8 @@ OntoWikiRDForm.prototype = {
             abort : function() {
             	callback( false );
             }
-        });
+        });        
+        self.rdform = rdform.data();
     },
 
     // create new distinc resource id if its already existing
