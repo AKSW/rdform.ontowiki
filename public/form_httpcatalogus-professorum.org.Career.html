@@ -1,10 +1,17 @@
 <form base="http://catalogus-professorum.org/" prefix="cpm http://catalogus-professorum.org/cpm/ cpl http://catalogus-professorum.org/lipsiensium/ rdfs http://www.w3.org/2000/01/rdf-schema# hp http://purl.org/vok/hp/">
-  <legend>Karriere</legend>
+  <legend>Lehrtätigkeit, Karriere</legend>
   <div typeof="cpm:Career" resource="cpl:Career/{name}/{rdfs:label}">
-    <p class="help">Incl. außeruniversitäre Karriereabschnitte, wie z.B. bei den Psychologen am Zentralinstitut für Jugenforschung (vgl. Udo Ettrich) oder psychologische Beratungsstelle an der Poliklinik Schönebeck (vgl. Jürgen Guthke), wenn es zur Vorbereitung auf die Universitätslaufbahn diente.</p>
-
+    
     <label>Bezeichnung</label>
-    <input type="literal" textarea name="rdfs:label" datatype="xsd:string" />
+    <input type="literal" textarea name="rdfs:label" datatype="xsd:string" required />
+
+    <label>Universität / Körperschaft</label>
+    <input name="cpm:periodBody" type="resource" external
+      subform="Body" resource="cpl:Body/{THIS}"
+      autocomplete query-endpoint="http://catalogus-professorum.org/sparql"
+      query-apitype="sparql" query-datatype="json"
+      query="SELECT DISTINCT * WHERE { { ?item rdf:type <http://catalogus-professorum.org/cpm/Body> } UNION { ?item rdf:type <http://catalogus-professorum.org/cpm/Institution> } ?item rdfs:label ?label . FILTER regex(?label,%s,'i')} ORDER BY ?label LIMIT 20"
+    /> 
 
     <label>von</label>
     <input type="literal" name="cpm:from" datatype="xsd:date" placeholder="JJJJ-MM" />

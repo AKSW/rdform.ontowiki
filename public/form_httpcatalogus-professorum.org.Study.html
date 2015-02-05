@@ -4,10 +4,15 @@
     <p class="help">Eingabe der schulischen, beruflichen und universitären Ausbildung.<br />Abschluss mit Urkundendatum unter Qualifikationen.</p>
 
     <label>Ausbildungsabschnitt</label>
-    <input name="rdfs:label" textarea type="literal" datatype="xsd:string" placeholder="Bezeichnung" />
+    <input name="rdfs:label" textarea type="literal" datatype="xsd:string" placeholder="Bezeichnung" required />
 
     <label>Schule / Uni</label>
-    <input name="cpm:relatedBody" type="resource" external />
+    <input name="cpm:periodBody" type="resource" external
+      subform="Body"
+      autocomplete query-endpoint="http://catalogus-professorum.org/sparql"
+      query-apitype="sparql" query-datatype="json"
+      query="SELECT DISTINCT * WHERE { { ?item rdf:type <http://catalogus-professorum.org/cpm/Body> } UNION { ?item rdf:type <http://catalogus-professorum.org/cpm/Institution> } UNION { ?item rdf:type <http://catalogus-professorum.org/cpm/Institute> } UNION { ?item rdf:type <http://catalogus-professorum.org/cpm/Academy> } UNION { ?item rdf:type <http://catalogus-professorum.org/cpm/Department> } UNION { ?item rdf:type <http://catalogus-professorum.org/cpm/Faculty> } ?item rdfs:label ?label . FILTER regex(?label,%s,'i')} ORDER BY ?label LIMIT 20"
+    /> 
 
     <label>von</label>
     <input name="cpm:from" type="literal" datatype="xsd:date" placeholder="JJJJ-MM" />

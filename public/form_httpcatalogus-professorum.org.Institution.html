@@ -1,8 +1,18 @@
 <form base="http://catalogus-professorum.org/" prefix="cpm http://catalogus-professorum.org/cpm/ cpl http://catalogus-professorum.org/lipsiensium/ rdfs http://www.w3.org/2000/01/rdf-schema# hp http://purl.org/vok/hp/">
-  <legend>Fakultät / Sektion / Institut</legend>
-  <div typeof="cpm:Institution" resource="cpl:Institution/{name}/{rdfs:label}" multiple>
-    <p class="help">Mehrfacherfassung bei Inhabern von Professuren über verschiedene Epochen, d.h. vor 1968/69, 1969-1990, 1990-1993 u. nach 1993.</p>
+  <legend>Institution</legend>
+  <div typeof="cpm:Institution" resource="cpl:Institution/{rdfs:label}">
 
+    <label>Bezeichnung</label>
+    <input name="rdfs:label" type="literal" datatype="xsd:string" placeholder="Bezeichnung" required />
+
+    <label>Ort</label>
+    <input name="cpm:bodyPlace" type="resource" external 
+      autocomplete query-endpoint="http://catalogus-professorum.org/sparql"
+      query-apitype="sparql" query-datatype="json"
+      query="SELECT DISTINCT * WHERE {?item <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://ns.aksw.org/spatialHierarchy/City>;<http://www.w3.org/2000/01/rdf-schema#label> ?label. FILTER regex(?label,%s,'i')} ORDER BY ?label LIMIT 20"
+    />
+
+    <!--
     <label>Fakultät</label>
     <input type="literal" name="rdfs:label" datatype="xsd:string" />    
 
@@ -17,14 +27,6 @@
 
     <label>FB/WG/WB (69-90)</label>
     <input type="literal" name="cpm:studyField" datatype="xsd:string" help="Nur für die Epoche von 1969 bis 1990 anzugeben. WB - Wissenschaftsbereich, WG - Wissenschaftsgebiet, FB - Forschungsbereich" />
-
-    <label>von</label>
-    <input type="literal" name="cpm:from" datatype="xsd:date" placeholder="JJJJ" />
-
-    <label>bis</label>
-    <input type="literal" name="cpm:to" datatype="xsd:date" placeholder="JJJJ" />
-
-    <label>Anmerkung</label>
-    <input name="cpm:periodNote" textarea type="literal" datatype="xsd:string" additional />
+    -->
   </div>
 </form>

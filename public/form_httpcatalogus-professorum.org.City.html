@@ -1,0 +1,42 @@
+<form base="http://catalogus-professorum.org/" prefix="cp http://catalogus-professorum.org/ cpm http://catalogus-professorum.org/cpm/ cpl http://catalogus-professorum.org/lipsiensium/ shv http://ns.aksw.org/spatialHierarchy/ rdfs http://www.w3.org/2000/01/rdf-schema# hp http://purl.org/vok/hp/">
+  <legend>Ort</legend>
+  <div typeof="shv:City" resource="cp:Stadt/{rdfs:label}">
+    <label>Bezeichnung</label>
+    <input name="rdfs:label" type="literal" />
+
+    <label>liegt in (Administativer Bereich)</label>
+    <input name="shv:isLocatedIn" type="resource" external subform="AdministrativeDistrict" typeof="AdministrativeDistrict"
+      autocomplete query-endpoint="http://catalogus-professorum.org/sparql"
+      query-apitype="sparql" query-datatype="json"
+      query="SELECT DISTINCT * WHERE {?item <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://ns.aksw.org/spatialHierarchy/AdministrativeDistrict>;<http://www.w3.org/2000/01/rdf-schema#label> ?label. FILTER regex(?label,%s,'i')} ORDER BY ?label LIMIT 20"
+    />
+
+    <label>liegt in (Land)</label>
+    <input name="shv:isLocatedIn" type="resource" external typeof="Country"
+      autocomplete query-endpoint="http://catalogus-professorum.org/sparql"
+      query-apitype="sparql" query-datatype="json"
+      query="SELECT DISTINCT * WHERE {?item <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://ns.aksw.org/spatialHierarchy/Country>;<http://www.w3.org/2000/01/rdf-schema#label> ?label. FILTER regex(?label,%s,'i')} ORDER BY ?label LIMIT 20"
+    />
+
+    <label>Nachfolger von</label>
+    <input name="shv:subsequentTo" type="resource" external additional
+      autocomplete query-endpoint="http://catalogus-professorum.org/sparql"
+      query-apitype="sparql" query-datatype="json"
+      query="SELECT DISTINCT * WHERE {?item <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://ns.aksw.org/spatialHierarchy/City>;<http://www.w3.org/2000/01/rdf-schema#label> ?label. FILTER regex(?label,%s,'i')} ORDER BY ?label LIMIT 20"
+    />
+
+    <label>Vorgänder von</label>
+    <input name="shv:priorTo" type="resource" external additional
+      autocomplete query-endpoint="http://catalogus-professorum.org/sparql"
+      query-apitype="sparql" query-datatype="json"
+      query="SELECT DISTINCT * WHERE {?item <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://ns.aksw.org/spatialHierarchy/City>;<http://www.w3.org/2000/01/rdf-schema#label> ?label. FILTER regex(?label,%s,'i')} ORDER BY ?label LIMIT 20"
+    />
+
+    <label>Gründungsdatum</label>
+    <input name="shv:formationDate" type="literal" additional datatype="xsd:date" placeholder="JJJJ-MM-TT" />
+
+    <label>Auflösungsdatum</label>
+    <input name="shv:dissolutionDate" type="literal" additional datatype="xsd:date" placeholder="JJJJ-MM-TT" />
+
+  </div>  
+</form>
