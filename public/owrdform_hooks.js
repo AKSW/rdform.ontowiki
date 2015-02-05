@@ -21,11 +21,21 @@ RDForm_Hooks.prototype = {
 				var args = $(parentSubform).attr("arguments");
 				_this.$elem.find("div[typeof]").attr("arguments", args);
 				_this.$elem.find("div[typeof]").data("rdform-model")["@rdform"]["arguments"] = $.parseJSON(args);
-			}
-			//return false; // return, we dont want to dubble reinit all event handlers!
+			}			
 		}
 
-		//return true;
+	},
+
+	__afterInitFormHandler : function() {
+		var _this = this;
+		/*
+		TODO
+		_this.$elem.find("input[promptlysubform]").each( function() {
+			if ( $(this).val() == "" ) {
+				$(this).parent().find(".rdform-new-subform").trigger("click");
+			}
+		});
+		*/
 	},
 
 	// on insert a existing resource into the form
@@ -43,6 +53,8 @@ RDForm_Hooks.prototype = {
 					if ( data.length == 0 ) { // no data found!
 						callback(i, di, resource);
 					} else {
+						if ( _this.owHooks && typeof _this.owHooks.__insertResourceData !== "undefined" )
+							data[0] = _this.owHooks.__insertResourceData( i, data[0] );
 						callback( i, di, data[0] );	
 					}
 				});
@@ -97,8 +109,10 @@ RDForm_Hooks.prototype = {
 		_this.getResourceData( $(thisResource).val(), function( dataNew ){
 			if ( dataNew.length != 0 ) { 
 				_this.restoreResource( thisResource, dataNew[0] );
+			} else {
+				_this.restoreResource( thisResource, $(thisResource).val() );
 			}
-		});
+		});		
 	},
 
 	// on click edit-subform btn
@@ -179,6 +193,15 @@ RDForm_Hooks.prototype = {
 			}
 		}
 
+	},
+
+	// on select autoconplete item
+	__selectAutocompleteItem : function( elem, resourceUri ) {
+		var _this = this;
+		if ( $(elem).attr("editaftercomplete") !== undefined ) {
+			$(elem).val( resourceUri );
+			$(elem).parent().find("button.rdform-edit-subform").trigger("click");
+		}
 	},
 
 	// on get autocomplete item, may add individual label or value
@@ -272,39 +295,24 @@ RDForm_Hooks.prototype = {
 					});
 				}
 				$(resContainer).children().show();
+				$(resContainer).find("."+_this.rdform._ID_+"-edit-subform").removeClass("hide");
 				$(subformContainer).remove();
 			});
 			$(resContainer).children().hide();
 			$(subformContainer).show("slow");
-			
-			// TODO: dont duplcaite class on edit subform...			
-			//removeParentEventHandler( owRdform );			
+			$(subformContainer).find("."+_this.rdform._ID_+"-submit-btn-group").hide();
+			$(subformContainer).focusin(function() {
+				$(subformContainer).find("."+_this.rdform._ID_+"-submit-btn-group").show();
+			});
 		});
-
-		// remove event handler in subform from parent RDForm
-		function removeParentEventHandler( subform ) {
-			var subform = subform.rdform._rdform_class;
-			//var parentHandler = _this.rdform.initFormHandler;
-			//subform.$elem.off("click", "button."+_this.rdform._ID_+"-duplicate-property", parentHandler.duplicateProperty );
-			console.log("BUG: duplicated Subform!", subform);
-			subform.$elem.off("change", "input" );
-			subform.$elem.off("click", "button."+_this.rdform._ID_+"-edit-subform" );
-			subform.$elem.off("click", "button."+_this.rdform._ID_+"-new-subform" );
-			subform.$elem.off("click", "button."+_this.rdform._ID_+"-add-property" );
-			subform.$elem.off("click", "button."+_this.rdform._ID_+"-duplicate-property" );
-			subform.$elem.off("click", "button."+_this.rdform._ID_+"-remove-property" );
-			subform.$elem.off("click", "div."+_this.rdform._ID_+"-edit-class-resource span" );
-			subform.$elem.off("keyup", "div."+_this.rdform._ID_+"-edit-class-resource input" );
-			subform.$elem.off("change blur", "div."+_this.rdform._ID_+"-edit-class-resource input" );
-			subform.$elem.off("blur", "input[external]" );
-			subform.$elem.off("focus", "input[autocomplete]" );
-			subform.$elem.off("change", "input[autocomplete]" );
-		}
 	},
 
 	// rewrite value and link of external resource from result
 	restoreResource : function( resource, result ) {
 		var _this = this;
+		if ( typeof result === "string" ) {
+			var result = { "@id" : result };
+		}
 		var resultUri = result["@id"];
 		var resourceLabel = resultUri.split("/").reverse()[0];
 		var resContainer = $(resource).parentsUntil(".form-group").parent();
