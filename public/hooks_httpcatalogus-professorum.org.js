@@ -13,6 +13,26 @@ RDForm_OntoWiki_Hooks.prototype = {
 				
 	},
 
+	__insertResourceData : function(i, data) {
+		var _this = this;
+		
+		var resourceUri = _this.rdform.data[0]["@id"];
+
+		if ( data["@type"][0] == "http://catalogus-professorum.org/cpm/Family" ) {
+			if ( data.hasOwnProperty("http://catalogus-professorum.org/cpm/familyChild") ) {
+				$.each(data["http://catalogus-professorum.org/cpm/familyChild"], function(n,child) {
+					if ( child["@id"] == resourceUri ) {
+						data["@type"][0] = "http://catalogus-professorum.org/cpm/ParentFamily";
+						return true;
+					}
+				});
+			}
+
+		}
+
+		return data;
+	},
+
 	// after instert existing data into the form
 	__afterInsertData : function() {
 		var _this = this;
