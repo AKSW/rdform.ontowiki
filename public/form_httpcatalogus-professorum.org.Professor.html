@@ -3,7 +3,7 @@
   <div typeof="cpm:Professor" resource="cpl:Professor/{name}">
     <!--<input name="forenames" type="hidden" />
     <input name="name" type="hidden" value="{forenames}_{cpm:surname}" />-->
-    <input name="name" type="hidden" value="{cpm:name}_{cpm:surname}" />    
+    <input name="name" type="hidden" value="{cpm:firstName}_{cpm:surname}" />    
 
     <label>reviewed</label>
     <input type="literal" boolean name="cpm:reviewed" datatype="xsd:boolean" checked help="Datensatz für Wissenschaftler zugänglich." />
@@ -12,7 +12,7 @@
     <input type="literal" boolean name="cpm:isPublic" datatype="xsd:boolean" checked help="Datensatz kann öffentlich eingesehen werden." />    
 
     <label>Bezeichnung</label>
-    <input name="rdfs:label" type="literal" datatype="xsd:string" value="{cpm:fullAcademicalTitle} {cpm:name} {cpm:surname}" required readonly />
+    <input name="rdfs:label" type="literal" datatype="xsd:string" value="{cpm:fullAcademicalTitle} {cpm:firstName} {cpm:surname}" required readonly />
 
     <label>Geschlecht</label>
     <input type="literal" name="cpm:gender" select select-options='{"female":"Frau","male":"Mann"}' />
@@ -21,7 +21,7 @@
     <input name="cpm:fullAcademicalTitle" type="literal" datatype="xsd:string" placeholder="Bsp: Prof. Dr." />    
 
     <label>Rufnamen</label>
-    <input name="cpm:name" type="literal" datatype="xsd:string" />
+    <input name="cpm:firstName" type="literal" datatype="xsd:string" />
 
     <label>Nachname</label>
     <input name="cpm:surname" type="literal" datatype="xsd:string" required />
@@ -31,7 +31,7 @@
 
     <label>Vornamen</label>
     <input name="cpm:has-forename" type="resource" external multiple 
-      typeof="cpm:Forename" subform="Forename" arguments='{"i":"1"}' promptlysubform
+      typeof="cpm:Forename" subform="Forename" arguments='{"i":"1","name":"{name}"}' promptlysubform
     />    
     
     <label>Geburt</label>
