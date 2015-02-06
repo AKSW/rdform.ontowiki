@@ -56,16 +56,19 @@ OntoWikiRDForm.prototype = {
             data: self.settings.data,
 
             submit: function() {
-            	var result = this[0];
-            	if ( result.length < 1 || self.settings.data ) {
-            		callback( result );
-            	} else {
-	            	var resourceIri = result["@id"];
-	            	self.getNewResourceIri( resourceIri, 0, function(newResourceIri) {
-	            		result["@id"] = newResourceIri;
-	            		callback( result );
-	            	});
-	            }
+				if ( this.length < 1 ) { // no data
+					return false;
+				}
+				var result = this[0];
+				if ( result.length < 1 || self.settings.data ) { // edited existing data
+					callback( result );
+				} else { // new data created
+					var resourceIri = result["@id"];
+					self.getNewResourceIri( resourceIri, 0, function(newResourceIri) {
+						result["@id"] = newResourceIri;
+						callback( result );
+					});
+				}
             },
 
             abort : function() {
