@@ -1,0 +1,15 @@
+<form base="http://aditus.catalogus-professorum.org/" prefix="cpd http://catalogus-professorum.org/cpd/ cpl http://aditus.catalogus-professorum.org/lipsiensium/ rdfs http://www.w3.org/2000/01/rdf-schema#">
+  <legend>Hochschule</legend>
+  <div typeof="cpd:Academy" resource="cpl:Academy/{rdfs:label}">
+
+    <label>Bezeichnung</label>
+    <input name="rdfs:label" type="literal" datatype="xsd:string" placeholder="Bezeichnung" required />
+
+    <label>Ort</label>
+    <input name="cpd:bodyPlace" type="resource" external 
+      autocomplete query-endpoint="http://aditus.catalogus-professorum.org/sparql"
+      query-apitype="sparql" query-datatype="json"
+      query="SELECT DISTINCT * WHERE {?item <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://ns.aksw.org/spatialHierarchy/City>;<http://www.w3.org/2000/01/rdf-schema#label> ?label. FILTER regex(?label,%s,'i')} ORDER BY ?label LIMIT 20"
+    /> 
+  </div>
+</form>

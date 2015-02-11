@@ -1,0 +1,19 @@
+<form base="http://aditus.catalogus-professorum.org/" prefix="cpd http://catalogus-professorum.org/cpd/ cpl http://aditus.catalogus-professorum.org/lipsiensium/ rdfs http://www.w3.org/2000/01/rdf-schema#">
+  <legend>Geburt</legend>
+  <div typeof="cpd:Birth" resource="cpl:Birth/{name}">
+    <input name="rdfs:label" type="literal" hidden value="Geburt {name} {cpd:date} in {(BASE)cpd:periodPlace}" readonly="" />
+
+    <label>Datum</label>
+    <input name="cpd:date" type="literal" datatype="xsd:date" placeholder="JJJJ-MM-TT" />    
+
+    <label>Ort</label>
+    <input name="cpd:periodPlace" type="resource" external subform="CityPlain" multiple
+      autocomplete query-endpoint="http://aditus.catalogus-professorum.org/sparql"
+      query-apitype="sparql" query-datatype="json"
+      query="SELECT DISTINCT * WHERE {?item <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://ns.aksw.org/spatialHierarchy/City>;<http://www.w3.org/2000/01/rdf-schema#label> ?label. FILTER regex(?label,%s,'i')} ORDER BY ?label LIMIT 20"
+    />
+
+    <label>Anmerkung</label>
+    <input name="cpd:periodNote" textarea type="literal" datatype="xsd:string" additional /> 
+  </div>  
+</form>

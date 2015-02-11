@@ -1,0 +1,18 @@
+<form base="http://aditus.catalogus-professorum.org/" prefix="cpd http://catalogus-professorum.org/cpd/ cpl http://aditus.catalogus-professorum.org/lipsiensium/ rdfs http://www.w3.org/2000/01/rdf-schema#">
+  <legend>Mitgliedschaften / Funktionen</legend>
+  <div typeof="cpd:Membership" resource="cpl:Membership/{name}/{rdfs:label}" multiple>
+    <p class="help">Universitätsämter oder Leitungsfunktionen außerhalb der Universität Leipzig. <br />Mitgliedschaften in wissenschaftlichen Gesellschaften, Akademien, Beiräten, Herausgeberschaften etc. sowie Parteien u. Organisationen.</p>
+
+    <label>Bezeichnung</label>
+    <input type="literal" textarea name="rdfs:label" datatype="xsd:string" />
+
+    <label>von</label>
+    <input type="literal" name="cpd:from" datatype="xsd:date" placeholder="JJJJ-MM-TT" />
+
+    <label>bis</label>
+    <input type="literal" name="cpd:to" datatype="xsd:date" placeholder="JJJJ-MM-TT" />
+
+    <label>Anmerkung</label>
+    <input name="cpd:periodNote" textarea type="literal" datatype="xsd:string" additional />
+  </div>
+</form>

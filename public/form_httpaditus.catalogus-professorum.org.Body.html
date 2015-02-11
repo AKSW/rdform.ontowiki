@@ -1,0 +1,27 @@
+<form base="http://aditus.catalogus-professorum.org/" prefix="cpd http://catalogus-professorum.org/cpd/ cpl http://aditus.catalogus-professorum.org/lipsiensium/ rdfs http://www.w3.org/2000/01/rdf-schema#">
+  <legend>Körperschaft</legend>
+  <div typeof="cpd:Body" resource="cpl:Body/{rdfs:label}" typeof-select='{"cpd:Academy":"Hochschule", "cpd:Faculty": "Fakultät / Sektion", "cpd:Institute":"Institut / FB,WB,WG", "cpd:Department":"Abteilung / Lehrstuhl", "cpd:Organisation":"Organisation", "cpd:PoliticalOrganisation":"Politische Organisation", "cpd:Party":"Partei", "cpd:AcademicSociety":"Wissenschafliche Gesellschaft", "cpd:OtherOrganisation":"Andere Organisation","cpd:Body":"Andere Körperschaft"}'>
+
+    <!--
+    Subclass Selector: Institution, Department, Acadamy, ...
+    -->
+
+    <label>Bezeichnung</label>
+    <input name="rdfs:label" type="literal" datatype="xsd:string" placeholder="Bezeichnung" required />
+
+    <label>Ort</label>
+    <input name="cpd:bodyPlace" type="resource" external 
+      autocomplete query-endpoint="http://aditus.catalogus-professorum.org/sparql"
+      query-apitype="sparql" query-datatype="json"
+      query="SELECT DISTINCT * WHERE {?item <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://ns.aksw.org/spatialHierarchy/City>;<http://www.w3.org/2000/01/rdf-schema#label> ?label. FILTER regex(?label,%s,'i')} ORDER BY ?label LIMIT 20"
+    />
+
+    <label>ist Teil von</label>
+    <input name="cpd:isPartOf" type="resource" external additional
+      subform="Body" typeof="cpd:Body"
+      autocomplete query-endpoint="http://aditus.catalogus-professorum.org/sparql"
+      query-apitype="sparql" query-datatype="json"
+      query="SELECT DISTINCT * WHERE { ?item <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?body . ?item <http://www.w3.org/2000/01/rdf-schema#label> ?label . FILTER ( ( ?body = <http://catalogus-professorum.org/cpd/Body> || ?body = <http://catalogus-professorum.org/cpd/Institution> || ?body = <http://catalogus-professorum.org/cpd/Institute> || ?body = <http://catalogus-professorum.org/cpd/Academy> || ?body = <http://catalogus-professorum.org/cpd/Department> || ?body = <http://catalogus-professorum.org/cpd/Faculty> || ?body = <http://catalogus-professorum.org/cpd/Organisation> || ?body = <http://catalogus-professorum.org/cpd/OtherOrganisation> || ?body = <http://catalogus-professorum.org/cpd/Party> || ?body = <http://catalogus-professorum.org/cpd/AcademicSociety> || ?body = <http://catalogus-professorum.org/cpd/PoliticalOrganisation> ) && regex(?label,%s,'i') ) } ORDER BY ?label LIMIT 20"    
+    /> 
+  </div>
+</form>

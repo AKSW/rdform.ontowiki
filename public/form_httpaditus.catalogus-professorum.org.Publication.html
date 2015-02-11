@@ -1,0 +1,9 @@
+<form base="http://aditus.catalogus-professorum.org/" prefix="cpd http://catalogus-professorum.org/cpd/ cpl http://aditus.catalogus-professorum.org/lipsiensium/ rdfs http://www.w3.org/2000/01/rdf-schema#">
+  <legend>Publikationen</legend>
+  <div typeof="cpd:Publication" resource="cpl:Publication/{name}/{rdfs:label}" multiple>    
+
+    <label>Bezeichnung</label>
+    <input type="literal" textarea name="rdfs:label" datatype="xsd:string" />
+
+  </div>
+</form>

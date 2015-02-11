@@ -1,0 +1,14 @@
+<form base="http://aditus.catalogus-professorum.org/" prefix="cpd http://catalogus-professorum.org/cpd/ cpl http://aditus.catalogus-professorum.org/lipsiensium/ rdfs http://www.w3.org/2000/01/rdf-schema#">
+
+  <legend>Vornamen</legend>                                                                              
+  <div typeof="cpd:Forename" resource="cpl:Forename/{name}/{cpd:forename}">
+    <label>Vorname</label>      
+    <input name="cpd:forename" type="literal" datatype="xsd:string" placeholder="1. Vorname" required />
+
+    <input name="rdfs:label" type="hidden" value="{cpd:forename}" />
+    <input name="cpd:forenamePosition" type="hidden" datatype="xsd:int" value="{i}" />
+
+    <label>ist Rufname?</label>
+    <input name="cpd:isFirstName" type="literal" boolean datatype="xsd:boolean" value="1" checked />
+  </div> 
+</form>

@@ -1,0 +1,20 @@
+<form base="http://aditus.catalogus-professorum.org/" prefix="cpd http://catalogus-professorum.org/cpd/ cpl http://aditus.catalogus-professorum.org/lipsiensium/ rdfs http://www.w3.org/2000/01/rdf-schema#">
+  <legend>Qualifikation</legend>
+  <div typeof="cpd:Qualification" resource="cpl:Qualification/{name}/{rdfs:label}" multiple>
+    <p class="help">Akademische Karriere (Diplom-Hauptprüfung, Staatsexamen, Dissertation, Habilitation, Facultas docendi) mit Thema, Ort, Jahr Umwidmung Dissertation B in Habilitation.<br />Gemeinschaftspromotionen unter Anmerkungen notieren.</p>
+
+    <label>Bezeichnung</label>
+    <input type="literal" textarea name="rdfs:label" datatype="xsd:string" placeholder="Art der Qualifikation" />
+
+    <label>Qualifikations-Dokument</label>
+    <input name="cpd:periodDocument" type="resource" external
+      subform="QualificationDocument"
+    />
+
+    <label>Jahr</label>
+    <input type="literal" name="cpd:date" datatype="xsd:date" placeholder="JJJJ-MM-TT" />
+
+    <label>Anmerkung</label>
+    <input name="cpd:periodNote" textarea type="literal" datatype="xsd:string" additional />
+  </div>
+</form>

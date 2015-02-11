@@ -1,0 +1,59 @@
+<form base="http://aditus.catalogus-professorum.org/" prefix="cpd http://catalogus-professorum.org/cpd/ cpl http://aditus.catalogus-professorum.org/lipsiensium/ rdfs http://www.w3.org/2000/01/rdf-schema#">
+  <legend>Lehrtätigkeit, Karriere</legend>
+  <div typeof="cpd:Career" resource="cpl:Career/{name}">
+    
+    <label>Bezeichnung</label>
+    <input type="literal" textarea name="rdfs:label" datatype="xsd:string" required />
+    <!--
+    <label>Allgemeine Körperschaft</label>
+    <input name="cpd:periodBody" type="resource" external
+      subform="Body"
+      resource="cpl:Body/{THIS}"
+      typeof="cpd:Body"
+      autocomplete query-endpoint="http://aditus.catalogus-professorum.org/sparql"
+      query-apitype="sparql" query-datatype="json"
+      query="SELECT DISTINCT * WHERE { ?item <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?body . ?item <http://www.w3.org/2000/01/rdf-schema#label> ?label . FILTER ( ( ?body = <http://catalogus-professorum.org/cpd/Body> || ?body = <http://catalogus-professorum.org/cpd/Institution> || ?body = <http://catalogus-professorum.org/cpd/Institute> || ?body = <http://catalogus-professorum.org/cpd/Academy> || ?body = <http://catalogus-professorum.org/cpd/Department> || ?body = <http://catalogus-professorum.org/cpd/Faculty> || ?body = <http://catalogus-professorum.org/cpd/Organisation> || ?body = <http://catalogus-professorum.org/cpd/OtherOrganisation> || ?body = <http://catalogus-professorum.org/cpd/Party> || ?body = <http://catalogus-professorum.org/cpd/AcademicSociety> || ?body = <http://catalogus-professorum.org/cpd/PoliticalOrganisation> ) && regex(?label,%s,'i') ) } ORDER BY ?label LIMIT 20"
+    />
+    -->
+    <label>Hochschule</label>
+    <input name="cpd:periodBody" type="resource" external
+      subform="Academy" typeof="cpd:Academy"
+      autocomplete query-endpoint="http://aditus.catalogus-professorum.org/sparql"
+      query-apitype="sparql" query-datatype="json"
+      query="SELECT DISTINCT * WHERE { ?item <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://catalogus-professorum.org/cpd/Academy> . ?item <http://www.w3.org/2000/01/rdf-schema#label> ?label . FILTER regex(?label,%s,'i')} ORDER BY ?label LIMIT 20"
+    />
+
+    <label>Fakultät / Sektion</label>
+    <input name="cpd:periodBody" type="resource" external additional
+      subform="Faculty" typeof="cpd:Faculty"
+      autocomplete query-endpoint="http://aditus.catalogus-professorum.org/sparql"
+      query-apitype="sparql" query-datatype="json"
+      query="SELECT DISTINCT * WHERE { ?item <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://catalogus-professorum.org/cpd/Faculty> . ?item <http://www.w3.org/2000/01/rdf-schema#label> ?label . FILTER regex(?label,%s,'i')} ORDER BY ?label LIMIT 20"
+    />
+
+    <label>Institut / FB, WB</label>
+    <input name="cpd:periodBody" type="resource" external multiple additional 
+      subform="Institute" typeof="cpd:Institute"
+      autocomplete query-endpoint="http://aditus.catalogus-professorum.org/sparql"
+      query-apitype="sparql" query-datatype="json"
+      query="SELECT DISTINCT * WHERE { ?item <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://catalogus-professorum.org/cpd/Institute> . ?item <http://www.w3.org/2000/01/rdf-schema#label> ?label . FILTER regex(?label,%s,'i')} ORDER BY ?label LIMIT 20"
+    />
+
+    <label>Lehrstuhl / Abteilung</label>
+    <input name="cpd:periodBody" type="resource" external multiple additional 
+      subform="Department" typeof="cpd:Department"
+      autocomplete query-endpoint="http://aditus.catalogus-professorum.org/sparql"
+      query-apitype="sparql" query-datatype="json"
+      query="SELECT DISTINCT * WHERE { ?item <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://catalogus-professorum.org/cpd/Department> . ?item <http://www.w3.org/2000/01/rdf-schema#label> ?label . FILTER regex(?label,%s,'i')} ORDER BY ?label LIMIT 20"
+    />    
+
+    <label>von</label>
+    <input type="literal" name="cpd:from" datatype="xsd:date" placeholder="JJJJ-MM" />
+
+    <label>bis</label>
+    <input type="literal" name="cpd:to" datatype="xsd:date" placeholder="JJJJ-MM" />
+
+    <label>Anmerkung</label>
+    <input name="cpd:periodNote" textarea type="literal" datatype="xsd:string" additional />
+  </div>
+</form>

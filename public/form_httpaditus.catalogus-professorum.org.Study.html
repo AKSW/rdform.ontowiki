@@ -1,0 +1,26 @@
+<form base="http://aditus.catalogus-professorum.org/" prefix="cpd http://catalogus-professorum.org/cpd/ cpl http://aditus.catalogus-professorum.org/lipsiensium/ rdfs http://www.w3.org/2000/01/rdf-schema#">
+  <legend>Schule / Ausbildung / Studium</legend>
+  <div typeof="cpd:Study" resource="cpl:Study/{name}/{rdfs:label}">
+    <p class="help">Eingabe der schulischen, beruflichen und universitären Ausbildung.<br />Abschluss mit Urkundendatum unter Qualifikationen.</p>
+
+    <label>Ausbildungsabschnitt</label>
+    <input name="rdfs:label" textarea type="literal" datatype="xsd:string" placeholder="Bezeichnung" required />
+
+    <label>Schule / Uni</label>
+    <input name="cpd:periodBody" type="resource" external
+      subform="Body"
+      autocomplete query-endpoint="http://aditus.catalogus-professorum.org/sparql"
+      query-apitype="sparql" query-datatype="json"
+      query="SELECT DISTINCT * WHERE { { ?item rdf:type <http://catalogus-professorum.org/cpd/Body> } UNION { ?item rdf:type <http://catalogus-professorum.org/cpd/Institution> } UNION { ?item rdf:type <http://catalogus-professorum.org/cpd/Institute> } UNION { ?item rdf:type <http://catalogus-professorum.org/cpd/Academy> } UNION { ?item rdf:type <http://catalogus-professorum.org/cpd/Department> } UNION { ?item rdf:type <http://catalogus-professorum.org/cpd/Faculty> } ?item rdfs:label ?label . FILTER regex(?label,%s,'i')} ORDER BY ?label LIMIT 20"
+    /> 
+
+    <label>von</label>
+    <input name="cpd:from" type="literal" datatype="xsd:date" placeholder="JJJJ-MM" />
+
+    <label>bis</label>
+    <input name="cpd:to" type="literal" datatype="xsd:date" placeholder="JJJJ-MM" />
+
+    <label>Anmerkung</label>
+    <input name="cpd:periodNote" textarea type="literal" datatype="xsd:string" additional />
+  </div>
+</form>
