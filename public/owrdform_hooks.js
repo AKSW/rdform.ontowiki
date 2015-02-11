@@ -46,8 +46,8 @@ RDForm_Hooks.prototype = {
 
 		if ( ! resource.hasOwnProperty("@type") ) { // it seems to be an external resource, get data from ontowiki
 
-			// get resource only if there is an input with subofrm attribute
-			var resourceInput = _this.rdform.getElement( _this.$elem.find("input"), 'name', i ).first();
+			// get resource only if there is an input or button with subform attribute
+			var resourceInput = _this.rdform.getElement( _this.$elem.find("input,button"), 'name', i ).first();
 			if ( resourceInput.length > 0 &&  $(resourceInput).attr("typeof") !== undefined ) {
 				_this.getResourceData( resource["@id"], function( data ){
 					if ( data.length == 0 ) { // no data found!
