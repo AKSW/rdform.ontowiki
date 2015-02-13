@@ -106,13 +106,15 @@ RDForm_Hooks.prototype = {
 	__afterBlurExternalResource : function( thisResource ) {
 		var _this = this;
 		// get resource data and insert link
-		_this.getResourceData( $(thisResource).val(), function( dataNew ){
-			if ( dataNew.length != 0 ) { 
-				_this.restoreResource( thisResource, dataNew[0] );
-			} else {
-				_this.restoreResource( thisResource, $(thisResource).val() );
-			}
-		});		
+		if ( $(thisResource).val().search(/^http/) != -1 ) {
+			_this.getResourceData( $(thisResource).val(), function( dataNew ){
+				if ( dataNew.length != 0 ) {
+					_this.restoreResource( thisResource, dataNew[0] );
+				} else {
+					_this.restoreResource( thisResource, $(thisResource).val() );
+				}
+			});
+		}
 	},
 
 	// on click edit-subform btn
