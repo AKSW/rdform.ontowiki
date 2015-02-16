@@ -10,6 +10,9 @@ RDForm_OntoWiki_Hooks.prototype = {
 	// after model is parsed - init form handlers
 	__initFormHandlers : function () {
 		var _this = this;
+
+		//set model baseIri (important to set baseIri for ungarn!)
+		_this.rdform.MODEL[0]["@context"]["@base"] = modelIri;
 		
 		// get hidden birthYear and deathYear for the label
 		_this.$elem.on("keyup", 'input[name="http://purl.org/voc/hp/birthDate"]', function() {
