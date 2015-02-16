@@ -100,6 +100,10 @@ RDForm_Hooks.prototype = {
 	__beforeRemoveProperty : function ( thisPropertyContainer ) {
 		var _this = this;
 		var thisProperty = thisPropertyContainer.find("."+_this.rdform._ID_+"-property").first();
+
+		if ( $(thisProperty).attr("onDeleteCascade") !== undefined ) {
+			//console.log("TODO: delete cascade if its the only resource-relatiob.instance...");
+		}
 	},
 
 	// after leave an external resource input field
@@ -231,7 +235,16 @@ RDForm_Hooks.prototype = {
 	__createClass : function ( thisClass ) {
 		var _this = this;
 
-		$(thisClass).attr( "resource", $(thisClass).attr( "resource").replace( " ", "_") );
+		// reaplce spaces with _, the webSafeString function would replace it with -
+		$(thisClass).attr( "resource", $(thisClass).attr( "resource").replace( " ", "_") );		
+	},
+
+	__createdClass : function ( thisClass ) {
+		var _this = this;
+		
+		// OntoWiki Bugfix: max 250 resource uri. Otherwise saving will cause an error
+		thisClass["@value"]["@id"] = _this.rdform.replaceStrPrefix( thisClass["@value"]["@id"] ).substring(0,250);
+		return thisClass
 	},
 
 	/*
