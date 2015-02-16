@@ -10,6 +10,8 @@ var rdform_translations = {
 	'remove': 'entfernen',
 	'edit': 'bearbeiten',
 	'new': 'neu',
+	'choose': 'auswählen',
+	'choose type' : 'Art auswählen',
 	'Add class %s': 'Neue Sektion %s hinzufügen',
 	'Duplicate class %s': 'Sektion %s duplizieren',
 	'Remove class %s': 'Sektion %s entfernen',	
