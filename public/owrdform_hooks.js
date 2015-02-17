@@ -38,6 +38,13 @@ RDForm_Hooks.prototype = {
 		*/
 	},
 
+	__beforeInsertData : function() {
+		var _this = this;
+		//add loading msg on insert data
+		var $alertContainer = _this.$elem.parent().find(".rdform-alert");
+		$alertContainer.append( $('<div class="alert alert-info loading rdform-loading-msg">Eigenschaften werden geladen. Bitte warten - </div>').hide() );
+	},
+
 	// on insert a existing resource into the form
 	// get and return i and di for asynchronus call
 	// i=relation, di=index, resource=resourceUri
@@ -173,32 +180,10 @@ RDForm_Hooks.prototype = {
 	__userInputValidation : function ( property ) {
 		var _this = this;
 		
-		// validate if cpm:from is a smaller date than cpm:to
-		if ( $(property).attr("name") == "cpm:from" ) {
-			var from = Date.parse( $(property).val() );
-			var toEl = $(property).parentsUntil(".rdform-literal-group").parent().next().find('input[name="cpm:to"]');
-			var to = Date.parse( toEl.val() );	
-			if ( from >= to ) {
-				return false;
-			} else {
-				if ( $(property).parentsUntil(".rdform-literal-group").parent().next().hasClass("has-error") ) {
-					_this.rdform.userInputValidation( toEl );
-				}
-			}
-		}
-		else if ( $(property).attr("name") == "cpm:to" ) {
-			var to = Date.parse( $(property).val() );
-			var fromEl = $(property).parentsUntil(".rdform-literal-group").parent().prev().find('input[name="cpm:from"]');
-			var from = Date.parse( fromEl.val() );
-			if ( from >= to ) {
-				return false;
-			} else {
-				if ( $(property).parentsUntil(".rdform-literal-group").parent().prev().hasClass("has-error") ) {
-					_this.rdform.userInputValidation( fromEl );
-				}
-			}
-		}
+		if ( _this.owHooks && typeof _this.owHooks.__userInputValidation !== "undefined" )
+			return _this.owHooks.__userInputValidation( property );		
 
+		return true;
 	},
 
 	// on select autoconplete item
@@ -336,7 +321,7 @@ RDForm_Hooks.prototype = {
 
 		if ( _this.owHooks && typeof _this.owHooks.__restoreResource !== "undefined" )
 			_this.owHooks.__restoreResource( resource, result );		
-		
+
 		if ( result.hasOwnProperty('http://www.w3.org/2000/01/rdf-schema#label') ) {
 			resourceLabel = result['http://www.w3.org/2000/01/rdf-schema#label'][0]['@value'];
 		}
@@ -348,14 +333,16 @@ RDForm_Hooks.prototype = {
 	getResourceData : function( resourceUri, callback ) {
 		var _this = this;
 
+		var $loadingMsg = _this.$elem.parent().find(".rdform-loading-msg");
+		$loadingMsg.show();
+
 		owCon.getResource( modelIri, resourceUri, function( owConData ) {
-			jsonld.fromRDF(
-				owConData.data, 
-				{format: 'application/nquads'},
-				function(err, doc) {
+			jsonld.fromRDF( owConData.data,  {format: 'application/nquads'}, function(err, doc) {
+					$loadingMsg.hide();
 					if ( doc.length > 0 ) {
 						doc[0]["@hash"] = owConData.dataHash;
 					}
+					if (err) { console.log('There was an error', err); }
 					callback( doc );
 				}
 			);
