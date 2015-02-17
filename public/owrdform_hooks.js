@@ -26,6 +26,15 @@ RDForm_Hooks.prototype = {
 
 	},
 
+	__writeWildcardValue : function( elem, wldVal ) {
+		var _this = this;
+
+		if ( _this.owHooks && typeof _this.owHooks.__writeWildcardValue !== "undefined" )
+			wldVal = _this.owHooks.__writeWildcardValue( elem, wldVal );
+
+		return wldVal;
+	},
+
 	__afterInitFormHandler : function() {
 		var _this = this;
 		/*
@@ -221,7 +230,7 @@ RDForm_Hooks.prototype = {
 		var _this = this;
 
 		// reaplce spaces with _, the webSafeString function would replace it with -
-		$(thisClass).attr( "resource", $(thisClass).attr( "resource").replace( " ", "_") );		
+		$(thisClass).attr( "resource", $(thisClass).attr( "resource").replace( " ", "-") );
 	},
 
 	__createdClass : function ( thisClass ) {
