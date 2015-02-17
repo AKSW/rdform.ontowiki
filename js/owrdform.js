@@ -7,6 +7,7 @@ function OntoWikiRDForm ( settings ){
 		hooks 		: "owrdform_hooks.js", // looking for the hooks file in: extensions/rdform/public/
 		owHooks		: "hooks_"+urlBase.replace(/[^a-z0-9-_.]/gi,'')+".js",
 		lang 		: null,
+		verbose		: true,
 		$container 	: $(".active-tab-content"), // the container element for the form. In OntoWiki by default the content of the active tab
 		$elem 		: null, // the form element
 	};
@@ -53,6 +54,7 @@ OntoWikiRDForm.prototype = {
             owHooks: urlBase + "extensions/rdform/public/"+self.settings.owHooks,
             lang: urlBase + "extensions/rdform/public/"+self.settings.lang,
             debug: true,
+            verbose: true,
             data: self.settings.data,
 
             submit: function() {
