@@ -54,7 +54,6 @@ OntoWikiRDForm.prototype = {
             owHooks: urlBase + "extensions/rdform/public/"+self.settings.owHooks,
             lang: urlBase + "extensions/rdform/public/"+self.settings.lang,
             debug: true,
-            verbose: true,
             data: self.settings.data,
 
             submit: function() {
