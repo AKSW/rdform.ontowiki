@@ -261,7 +261,7 @@ RDForm_Hooks.prototype = {
 				template: "form_" + urlBase.replace(/[^a-z0-9-_.]/gi,'') + "." + $(resource).attr("subform") + ".html",
 				$container: subformContainer,
 				data: nquads,
-				lang: "de.js",
+				lang: _this.rdform.settings.lang.split("/").reverse()[0],
 			});
 			owRdform.init( function(result){ 
 
