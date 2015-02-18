@@ -50,8 +50,7 @@ RDForm_Hooks.prototype = {
 	__beforeInsertData : function() {
 		var _this = this;
 		//add loading msg on insert data
-		var $alertContainer = _this.$elem.parent().find(".rdform-alert");
-		$alertContainer.append( $('<div class="alert alert-info loading rdform-loading-msg">Eigenschaften werden geladen. Bitte warten - </div>').hide() );
+		_this.rdform.alertArea.append( $('<div class="alert alert-info loading rdform-loading-msg">Eigenschaften werden geladen. Bitte warten - </div>').hide() );
 	},
 
 	// on insert a existing resource into the form
