@@ -308,10 +308,10 @@ RDForm_Hooks.prototype = {
 			});
 			$(resContainer).children().hide();
 			$(subformContainer).show("slow");
-			$(subformContainer).find("."+_this.rdform._ID_+"-submit-btn-group").hide();
+			/*$(subformContainer).find("."+_this.rdform._ID_+"-submit-btn-group").hide();
 			$(subformContainer).focusin(function() {
 				$(subformContainer).find("."+_this.rdform._ID_+"-submit-btn-group").show();
-			});
+			});*/
 		});
 	},
 
