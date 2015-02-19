@@ -295,15 +295,14 @@ RDForm_Hooks.prototype = {
 										_this.restoreResource( resource, dataNew[0] );
 									}
 								});
-
-							}							
+							}
 						} else {
 							alert(updateResult);
 						}
 					});
-				}
+					$(resContainer).find("."+_this.rdform._ID_+"-edit-subform").removeClass("hide");
+				} 
 				$(resContainer).children().show();
-				$(resContainer).find("."+_this.rdform._ID_+"-edit-subform").removeClass("hide");
 				$(subformContainer).remove();
 			});
 			$(resContainer).children().hide();
