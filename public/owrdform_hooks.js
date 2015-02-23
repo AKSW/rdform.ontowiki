@@ -116,8 +116,9 @@ RDForm_Hooks.prototype = {
 		var _this = this;
 		var thisProperty = thisPropertyContainer.find("."+_this.rdform._ID_+"-property").first();
 
-		if ( $(thisProperty).attr("onDeleteCascade") !== undefined ) {
-			//console.log("TODO: delete cascade if its the only resource-relatiob.instance...");
+		// on delete cascade: delete the linked resource if no other resource as a relation to it
+		if ( $(thisProperty).attr("ondeletecascade") !== undefined && $(thisProperty).val().search(/^http/) != -1 ) {
+			_this.deleteCascade( thisProperty );
 		}
 	},
 
@@ -353,6 +354,41 @@ RDForm_Hooks.prototype = {
 					callback( doc );
 				}
 			);
+		});
+	},
+
+	// delete a resource if no other resource has a relation to it
+	deleteCascade : function( thisProperty ) {
+		var _this = this;
+
+		_this.getResourceData( $(thisProperty).val(), function( resourceData ) {
+			if ( resourceData.length != 0 ) {
+				$.ajax({ // test if any other resource has a relation
+					url: urlBase + "/sparql",
+					dataType: "json",
+					data: {
+						query: "SELECT DISTINCT * WHERE { ?resource ?p <"+resourceData[0]["@id"]+"> } LIMIT 10",
+						format: "json"
+					},
+					success: function( data ) {
+						if ( data.results.bindings.length > 1 ) { // any other resource has a relation... TODO: what todo?
+							console.log("Cannnot delete resource. Some other resource has a relation to it: ", data.results.bindings );
+							var otherRL = [];
+							$.each(data.results.bindings, function(k,v){
+								otherRL.push('<a href="'+v.resource.value+'">'+v.resource.value.split("/").reverse()[0]+'</a>');
+							});
+							_this.rdform.showAlert( "warning", "Cannot delete resource <a href='"+$(thisProperty).val()+"'>"+$(thisProperty).val().split("/").reverse()[0]+"</a> because some other resources has a relation to it. Please have a look at: " + otherRL.join(", ") );
+						} else {
+							// update resource with no properties
+							var modelIri = $("#modelIri").val();
+							owCon.updateResource( modelIri, resourceData[0]["@id"], resourceData[0]["@hash"], {}, function( result ) {});								
+						}
+					},
+					error: function(e) {
+						console.log( 'Error on ajax-sparql query: ', e );
+					},
+				});
+			} 
 		});
 	},
 
