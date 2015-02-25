@@ -17,5 +17,14 @@ New for OntoWiki:
 - Subforms
 
 - Wildcard Functions
+	HASH
+	BASE
 
-- ...
+- New Attributes
+	subform
+	typeof (for external resources)
+	editaftercomplete
+	ondeletecascade
+	
+
+- More then one labels in autocomplete
