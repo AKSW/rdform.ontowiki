@@ -256,24 +256,23 @@ RDForm_Hooks.prototype = {
 		}
 		$(resContainer).append( $(subformContainer).hide() );
 
+		var hash = ( data != null ) ? data["@hash"] : null;
+
 		jsonld.toRDF( data, {format: 'application/nquads'}, function(err, nquads) {
 			var owRdform = new OntoWikiRDForm({
 				template: "form_" + urlBase.replace(/[^a-z0-9-_.]/gi,'') + "." + $(resource).attr("subform") + ".html",
 				$container: subformContainer,
 				data: nquads,
+				hash: hash,
 				lang: _this.rdform.settings.lang.split("/").reverse()[0],
 			});
 			owRdform.init( function(result){ 
 
 				if ( result ) {
-					var modelIri = $("#modelIri").val();
-					var hash = '40cd750bba9870f18aada2478b24840a'; // hash for empty resource
+					var modelIri = $("#modelIri").val();					
 					var subForm = $(subformContainer).find("div[typeof]").first();
-					if ( data != null ) {
-						hash = data["@hash"];
-					}
 
-					owCon.updateResource( modelIri, result["@id"], hash, result, function( updateResult ) {
+					owCon.updateResource( modelIri, result["@id"], result["@hash"], result, function( updateResult ) {
 						if ( updateResult == true ) {
 							var resultUri = result["@id"];
 
@@ -377,7 +376,7 @@ RDForm_Hooks.prototype = {
 							$.each(data.results.bindings, function(k,v){
 								otherRL.push('<a href="'+v.resource.value+'">'+v.resource.value.split("/").reverse()[0]+'</a>');
 							});
-							_this.rdform.showAlert( "warning", "Cannot delete resource <a href='"+$(thisProperty).val()+"'>"+$(thisProperty).val().split("/").reverse()[0]+"</a> because some other resources has a relation to it. Please have a look at: " + otherRL.join(", ") );
+							_this.rdform.showAlert( "warning", "Cannot delete resource <a href='"+$(thisProperty).val()+"' target='_blank'>"+$(thisProperty).val().split("/").reverse()[0]+"</a> because some other resources has a relation to it. Please have a look at: " + otherRL.join(", ") );
 						} else {
 							// update resource with no properties
 							var modelIri = $("#modelIri").val();
