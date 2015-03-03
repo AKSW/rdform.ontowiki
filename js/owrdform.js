@@ -9,12 +9,18 @@ function OntoWikiRDForm ( settings ){
 		lang 		: null,
 		verbose		: true,
 		$container 	: $(".active-tab-content"), // the container element for the form. In OntoWiki by default the content of the active tab
-		$elem 		: null, // the form element
+		$elem 		: null, // the form element,
+		hash 		: '40cd750bba9870f18aada2478b24840a' // the default hash for a new and empty resource
 	};
 
 	// merge default settings with given settings
 	this.rdform = null;
+	this.result = null;
 	this.settings = $.extend({}, self.defaultSettings, settings || {});
+
+	if ( settings.hash == null ) {
+		this.settings.hash = self.defaultSettings.hash;
+	}
 }
 
 
@@ -41,7 +47,7 @@ OntoWikiRDForm.prototype = {
 			);
 		} else {
 			self.run( function(res) { callback( res ) } );
-		}
+		}		
 	},
 
 	// run the rdform-plugin
@@ -60,14 +66,15 @@ OntoWikiRDForm.prototype = {
 				if ( this.length < 1 ) { // no data
 					return false;
 				}
-				var result = this[0];
-				if ( result.length < 1 || self.settings.data ) { // edited existing data
-					callback( result );
+				self.result = this[0];
+				if ( self.result.length < 1 || self.settings.data ) { // edited existing data
+					callback( self.result );
 				} else { // new data created
-					var resourceIri = result["@id"];
+					var resourceIri = self.result["@id"];
 					self.getNewResourceIri( resourceIri, 0, function(newResourceIri) {
-						result["@id"] = newResourceIri;
-						callback( result );
+						self.result["@id"] = newResourceIri;
+						self.result["@hash"] = self.settings.hash;
+						callback( self.result );
 					});
 				}
             },
@@ -80,7 +87,7 @@ OntoWikiRDForm.prototype = {
     },
 
     // create new distinc resource id if its already existing
-    getNewResourceIri: function( resourceIri, i, callback ) {
+    getNewResourceIri: function( resourceIri, i, callback, dontAsk=false ) {
     	var self = this;
     	var owCon = new OntoWikiConnection(urlBase + 'jsonrpc');
 
@@ -95,9 +102,35 @@ OntoWikiRDForm.prototype = {
     			callback( testResourceIri );
     		} else {
     			i++;
-    			self.getNewResourceIri( resourceIri, i, function( newResourceIri ) {
-    				callback( newResourceIri );
-    			});
+    			if ( dontAsk ) {
+    				self.getNewResourceIri( resourceIri, i, function( newResourceIri ) {
+    					callback( newResourceIri );
+    				}, dontAsk );
+    			} else {
+					self.rdform._rdform_class.showAlert( "warning", "Es existiert bereits die Resource <a href='"+resourceIri+"' target='_blank'>"+resourceIri.split("/").reverse()[0]+"</a> mit der gleichen URI." +
+						"<br /><br /><button type='button' class='btn btn-default rdform-submit-overwrite'>Überschreiben</button> (alle Daten in <a href='"+resourceIri+"' target='_blank'>"+resourceIri.split("/").reverse()[0]+"</a> werden durch die unten stehenden ersetzt)" +						
+						"<br /><br /><button type='button' class='btn btn-default rdform-submit-adopt'>Übernehmen</button> (als neue Resource wird <a href='"+resourceIri+"' target='_blank'>"+resourceIri.split("/").reverse()[0]+"</a> verwendet)" +
+						"<br /><br /><button type='button' class='btn btn-default rdform-submit-new'>Neue anlegen</button> (die unten stehenden Daten werden als neue Resource angelegt)"
+					);
+					$(".rdform-submit-overwrite", self.settings.$container).click(function() {
+						self.settings.hash = resData.dataHash;
+						callback( resourceIri );
+					});
+					$(".rdform-submit-adopt", self.settings.$container).click(function() {
+						jsonld.fromRDF( resData.data,  {format: 'application/nquads'}, function(err, doc) {
+								if (err) { console.log('There was an error', err); }
+								self.settings.hash = resData.dataHash;
+								self.result = doc[0];
+								callback( resourceIri );
+							}
+						);
+					});
+					$(".rdform-submit-new", self.settings.$container).click(function() {
+						self.getNewResourceIri( resourceIri, i, function( newResourceIri ) {
+	    					callback( newResourceIri );
+	    				}, true );
+					});
+				}
     		}
 		});
     },
