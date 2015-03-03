@@ -67,13 +67,13 @@ OntoWikiRDForm.prototype = {
 					return false;
 				}
 				self.result = this[0];
+				self.result["@hash"] = self.settings.hash;
 				if ( self.result.length < 1 || self.settings.data ) { // edited existing data
 					callback( self.result );
 				} else { // new data created
 					var resourceIri = self.result["@id"];
 					self.getNewResourceIri( resourceIri, 0, function(newResourceIri) {
 						self.result["@id"] = newResourceIri;
-						self.result["@hash"] = self.settings.hash;
 						callback( self.result );
 					});
 				}
