@@ -111,7 +111,7 @@ RDForm_Hooks.prototype = {
 		}
 	},
 
-	// after adding a property
+	// before removing a property
 	__beforeRemoveProperty : function ( thisPropertyContainer ) {
 		var _this = this;
 		var thisProperty = thisPropertyContainer.find("."+_this.rdform._ID_+"-property").first();
@@ -119,6 +119,11 @@ RDForm_Hooks.prototype = {
 		// on delete cascade: delete the linked resource if no other resource as a relation to it
 		if ( $(thisProperty).attr("ondeletecascade") !== undefined && $(thisProperty).val().search(/^http/) != -1 ) {
 			_this.deleteCascade( thisProperty );
+		}
+
+		// dlete the resource which is given in subform-query
+		if ( $(thisProperty).attr("subform-query") !== undefined && $(thisProperty).val().search(/^http/) != -1 ) {
+			_this.deleteBySubformQuery( thisProperty );		
 		}
 	},
 
@@ -380,7 +385,7 @@ RDForm_Hooks.prototype = {
 						} else {
 							// update resource with no properties
 							var modelIri = $("#modelIri").val();
-							owCon.updateResource( modelIri, resourceData[0]["@id"], resourceData[0]["@hash"], {}, function( result ) {});								
+							owCon.updateResource( modelIri, resourceData[0]["@id"], resourceData[0]["@hash"], {}, function( result ) {});
 						}
 					},
 					error: function(e) {
@@ -388,6 +393,40 @@ RDForm_Hooks.prototype = {
 					},
 				});
 			} 
+		});
+	},
+
+	deleteBySubformQuery : function( thisProperty ) {
+		var _this = this;
+		var subformQuery = $(thisProperty).attr("subform-query");
+		// tmp replace brackets for wildcard searching, replace THIS with this element value, reaplace wildcards
+		subformQuery = subformQuery.replace(/{ /g, '$BRACKET$ ').replace(/ }/g, ' $BRACKET$');
+		subformQuery = subformQuery.replace(/{THIS}/g, $(thisProperty).val() );
+		subformQuery = _this.rdform.replaceWildcards( subformQuery, _this.$elem );
+		subformQuery = subformQuery["str"];
+		subformQuery = subformQuery.replace(/\$BRACKET\$ /g, '{ ').replace(/ \$BRACKET\$/g, ' }');
+
+		$.ajax({
+			url: urlBase + "/sparql",
+			dataType: "json",
+			data: {
+				query: subformQuery,
+				format: "json"
+			},
+			success: function( data ) {
+				_this.getResourceData( data.results.bindings[0].event["value"], function( newData ){
+					/*
+					var newDataInput = $('<input type="hidden" value="'+newData[0]["@id"]+'" />');
+					$(thisProperty).append( newDataInput );
+					_this.deleteCascade( newDataInput );
+					*/
+					var modelIri = $("#modelIri").val();						
+					owCon.updateResource( modelIri, newData[0]["@id"], newData[0]["@hash"], {}, function( result ) {});
+				});
+			},
+			error: function(e) {
+				console.log( 'Error on autocomplete: ', e );
+			},
 		});
 	},
 
