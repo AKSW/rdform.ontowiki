@@ -87,7 +87,10 @@ OntoWikiRDForm.prototype = {
     },
 
     // create new distinc resource id if its already existing
-    getNewResourceIri: function( resourceIri, i, callback, dontAsk=false ) {
+    getNewResourceIri: function( resourceIri, i, callback, dontAsk ) {
+        if (dontAsk == undefined) {
+            dontAsk=false;
+        }
     	var self = this;
     	var owCon = new OntoWikiConnection(urlBase + 'jsonrpc');
 
