@@ -6,4 +6,4 @@
 	url = https://github.com/digitalbazaar/jsonld.js.git
 [submodule "js/lib/rdform"]
 	path = js/lib/rdform
-	url = git@github.com:simeonackermann/RDForm.git
+	url = https://github.com/simeonackermann/RDForm.git
