@@ -23,4 +23,7 @@ var rdform_translations = {
 	'Remove resource %s': 'Sektion %s entfernen',
 	'New resource %s': 'Neue Sektion %s',
 	'Required field': 'Pflichtfeld',
+	'Year' : 'Jahr',
+	'Month': 'Monat',
+	'Day': 'Tag'
 }
