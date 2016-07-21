@@ -264,6 +264,9 @@ RDForm_Hooks.prototype = {
 		var hash = ( data != null ) ? data["@hash"] : null;
 
 		jsonld.toRDF( data, {format: 'application/nquads'}, function(err, nquads) {
+			if ( nquads == "" ) {
+				nquads = null;
+			}
 			var owRdform = new OntoWikiRDForm({
 				template: "form_" + urlBase.replace(/[^a-z0-9-_.]/gi,'') + "." + $(resource).attr("subform") + ".html",
 				$container: subformContainer,
@@ -272,7 +275,6 @@ RDForm_Hooks.prototype = {
 				lang: _this.rdform.settings.lang.split("/").reverse()[0],
 			});
 			owRdform.init( function(result){ 
-
 				if ( result ) {
 					var modelIri = $("#modelIri").val();					
 					var subForm = $(subformContainer).find("div[typeof]").first();
@@ -306,7 +308,7 @@ RDForm_Hooks.prototype = {
 						}
 					});
 					$(resContainer).find("."+_this.rdform._ID_+"-edit-subform").removeClass("hide");
-				} 
+				}
 				$(resContainer).children().show();
 				$(subformContainer).remove();
 			});
