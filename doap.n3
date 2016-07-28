@@ -15,5 +15,8 @@
   owconfig:privateNamespace : ;
   owconfig:enabled "true"^^xsd:boolean ;
   owconfig:templates "templates/" ;
-  owconfig:languages "languages/" .
+  owconfig:languages "languages/" ;
+  owconfig:debug "false"^^xsd:boolean ;
+  owconfig:useHooks "false"^^xsd:boolean ;
+  owconfig:defaultLang "en" .
 
