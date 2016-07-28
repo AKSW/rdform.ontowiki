@@ -31,7 +31,7 @@ class RdformHelper extends OntoWiki_Component_Helper
 
         $owApp = OntoWiki::getInstance();
 
-        if ($owApp->lastRoute == 'properties' && $owApp->selectedResource != null) {
+        /*if ($owApp->lastRoute == 'properties' && $owApp->selectedResource != null) {
             $owApp->getNavigation()->register(
                 'rdform',
                 array(
@@ -41,7 +41,7 @@ class RdformHelper extends OntoWiki_Component_Helper
                     'priority'   => 20
                 )
             );
-        }
+        }*/
     }
 
     /**
