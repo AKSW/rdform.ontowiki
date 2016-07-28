@@ -1,3 +1,9 @@
+var owCon = new OntoWikiConnection(urlBase + 'jsonrpc');
+var urlBaseWebsafe = urlBase.replace(/[^a-z0-9-_.]/gi,'');
+
+/**
+ * the OntoWikiRDForm Object
+ */
 function OntoWikiRDForm ( settings ){
 	var self = this;
 
@@ -5,12 +11,11 @@ function OntoWikiRDForm ( settings ){
 		data 		: null,
 		template 	: "form.html", // looking for the template file in: extensions/rdform/public/
 		hooks 		: "owrdform_hooks.js", // looking for the hooks file in: extensions/rdform/public/
-		owHooks		: "hooks_"+urlBase.replace(/[^a-z0-9-_.]/gi,'')+".js",
-		lang 		: null,
-		verbose		: true,
+		owHooks 	: rdformConfig['useHooks'] ? "hooks_"+urlBase.replace(/[^a-z0-9-_.]/gi,'')+".js" : null,
+		lang 		: self.getLangFile(),
 		$container 	: $(".active-tab-content"), // the container element for the form. In OntoWiki by default the content of the active tab
 		$elem 		: null, // the form element,
-		hash 		: '40cd750bba9870f18aada2478b24840a' // the default hash for a new and empty resource
+		hash 		: defaultHash // the default hash for a new and empty resource
 	};
 
 	// merge default settings with given settings
@@ -23,7 +28,9 @@ function OntoWikiRDForm ( settings ){
 	}
 }
 
-
+/**
+ * OntoWikiRDForm Prototype
+ */
 OntoWikiRDForm.prototype = {
 
 	// init a new form. Callback returns the submitted result of the form
@@ -51,15 +58,15 @@ OntoWikiRDForm.prototype = {
 	},
 
 	// run the rdform-plugin
-    run: function( callback) {
+    run: function( callback ) {
     	var self = this;
     	
     	var rdform = self.settings.$elem.RDForm({
             template: urlBase + "extensions/rdform/public/"+self.settings.template,            
-            hooks: urlBase + "extensions/rdform/public/"+self.settings.hooks,
+            hooks: urlBase + "extensions/rdform/js/"+self.settings.hooks,
             owHooks: urlBase + "extensions/rdform/public/"+self.settings.owHooks,
             lang: urlBase + "extensions/rdform/public/"+self.settings.lang,
-            debug: true,
+            debug: rdformConfig['debug'] ? true : false,
             data: self.settings.data,
 
             submit: function() {
@@ -101,7 +108,7 @@ OntoWikiRDForm.prototype = {
     	}
 
     	owCon.getResource( modelIri, testResourceIri, function( resData ) {
-    		if ( resData.dataHash == '40cd750bba9870f18aada2478b24840a' ) { // the has for an new resource
+    		if ( resData.dataHash == defaultHash ) { // the hash for a new resource
     			callback( testResourceIri );
     		} else {
     			i++;
@@ -137,4 +144,89 @@ OntoWikiRDForm.prototype = {
     		}
 		});
     },
+
+	getLangFile(){
+		var langFile = rdformConfig['defaultLang'] ? rdformConfig['defaultLang'] + '.js'  : null		
+		var langParam = location.href.search(/lang=\w/);
+		if ( langParam != -1 ) {
+			var lang = location.href.substr(langParam+5);
+			lang = lang.match(/\W/) ? lang.substr( 0, lang.search( /\W/) ) : lang;
+			langFile = lang + ".js";
+		}
+		return langFile;
+	}    
 }
+
+/** 
+ * Create New RDForm
+ */
+function createRDForm( owData ) {
+	var hash = defaultHash;
+	var data = null;
+	var editResource = false;	
+	var template = "form_" + urlBaseWebsafe + "." + resourceTemplate + ".html";	
+
+	var popupContainer = $('<div class="rdform-popup-layer"></div>');
+	var container = $('<div class="rdform-container"></div>');
+	$("body").append(popupContainer.append(container));	
+
+	if ( typeof owData !== "undefined" ) {
+		hash = owData.dataHash;
+		data = owData.data;
+		editResource = true;
+	}
+	
+	var owRdform = new OntoWikiRDForm({
+		$container: container,
+		template: template,
+		hash: hash,		
+		data: data
+	});
+	owRdform.init( function(result){
+		if ( result ) {
+			if ( ! editResource ) {
+				resourceUri = result["@id"];
+			}
+			owCon.updateResource( modelIri, resourceUri, hash, result, function( updateResult ) {
+				if ( updateResult == true ) {
+					window.location.href = decodeURIComponent(result["@id"]);
+				} else {
+					alert(updateResult);
+				}
+			});
+		} else {
+			container.hide( "fast", function() {
+				popupContainer.remove();
+			});
+		}
+
+	});
+
+	owRdform.settings.$elem.prepend('<div id="rdform-drag-header"></div>');
+	$(container).prepend('<button class="btn btn-default close-rdform-btn pull-right" alt="Close title="Close"><span class="glyphicon glyphicon-remove"></span></button>');
+	window.scrollTo(0,0);
+	//drag_init();
+}
+
+// click edit btn
+$(".rdform-edit-btn").click(function(e) {
+	owCon.getResource( modelIri, resourceUri, function( resData ) {
+		createRDForm( resData );
+	});
+	e.preventDefault();
+});
+
+// click new btn
+$(".rdform-new-btn").click(function(e) {
+	createRDForm();
+	e.preventDefault();
+});
+
+// close the current form window
+$("body").on("click", ".close-rdform-btn", function(e) {
+	var form = $(this).parentsUntil(".rdform-popup-layer");
+	form.hide( "fast", function() {
+		form.parent().remove();
+	});
+	e.preventDefault();
+});
