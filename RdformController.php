@@ -37,8 +37,8 @@ class RdformController extends OntoWiki_Controller_Component
         //$this->view->headScript()->appendFile($owApp->extensionManager->getComponentUrl('rdform') . 'js/lib/rdform/js/jquery-ui.custom.min.js');
         $this->view->headScript()->appendFile($owApp->extensionManager->getComponentUrl('rdform') . 'js/lib/jsonld.js/js/jsonld.js');
         $this->view->headScript()->appendFile($owApp->extensionManager->getComponentUrl('rdform') . 'js/lib/rdform/js/rdform.js');
-        $this->view->headScript()->appendFile($owApp->extensionManager->getComponentUrl('rdform') . 'js/owrdform.js');
         $this->view->headScript()->appendFile($owApp->extensionManager->getComponentUrl('rdform') . 'js/jsonread.js');
+        $this->view->headScript()->appendFile($owApp->extensionManager->getComponentUrl('rdform') . 'js/owrdform.js');
 
         $this->view->selectedModel = $model;
         $this->view->selectedResource = $resource;
