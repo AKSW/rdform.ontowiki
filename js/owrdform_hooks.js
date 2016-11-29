@@ -53,6 +53,30 @@ RDForm_Hooks.prototype = {
 		_this.rdform.alertArea.append( $('<div class="alert alert-info loading rdform-loading-msg">Eigenschaften werden geladen. Bitte warten - </div>').hide() );
 	},
 
+	// on insert data, may return new value
+	__insertLiteral : function( uri, input, value ) {
+		var _this = this;
+
+		// may fix virtuoso dates xsd:gYear, Month, ... with timezone (1990-01-01T00:00:00Z)
+		if ( $(input).attr('datatype') == "xsd:date" &&
+			 _this.rdform.data[0].hasOwnProperty(uri)
+		) {
+			var datatype = _this.rdform.data[0][uri][0]["@type"];
+
+			if ( datatype == "http://www.w3.org/2001/XMLSchema#gYear" ) {
+				value = value.slice(0, 4);
+			}
+			else if ( datatype == "http://www.w3.org/2001/XMLSchema#gYearMonth" ) {
+				value = value.slice(0, 7);
+			}
+			else if ( datatype == "http://www.w3.org/2001/XMLSchema#date" ) {
+				value = value.slice(0, 10);
+			}
+		}
+
+		return value;
+	},
+
 	// on insert a existing resource into the form
 	// get and return i and di for asynchronus call
 	// i=relation, di=index, resource=resourceUri
@@ -228,6 +252,23 @@ RDForm_Hooks.prototype = {
 	// before creating the class properties from input values
 	__createResultClassProperty : function( propertyContainer ) {
 		var _this = this;
+
+		// may fix virtuoso dates, add timezone, otherwise site-layout will break
+		var dateInput = $("input."+_this.rdform._ID_+"-datepicker", propertyContainer);
+		if ( propertyContainer.hasClass(_this.rdform._ID_+"-literal-group") && 
+			dateInput.length > 0 &&
+			$(dateInput).val() != ""
+		) {
+			if ( $(dateInput).attr('datatype') == "xsd:gYear" ) {
+				dateInput.val( dateInput.val() + "-01-01T00:00:00Z" );
+			}
+			else if ( $(dateInput).attr('datatype') == "xsd:gYearMonth" ) {
+				dateInput.val( dateInput.val() + "-01T00:00:00Z" );
+			}
+			else if ( $(dateInput).attr('datatype') == "xsd:date" ) {
+				dateInput.val( dateInput.val() + "T00:00:00Z" );
+			}
+		}
 	},
 
 	// before generating the class object from input values and properties
